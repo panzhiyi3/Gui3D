@@ -4,6 +4,6 @@ Gui3D
 Gui3D : a GUI based on Gorilla for OGRE3D
 
 
-Modify version
+What this modify version do
 -----
 In order to add Freetype font support
