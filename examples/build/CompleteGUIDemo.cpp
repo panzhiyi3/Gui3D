@@ -35,7 +35,7 @@ public:
         Ogre::String atlasName,
         Ogre::String name)
     : Gui3D::Panel(gui, sceneMgr, size, 10, atlasName, name), 
-        next(nullptr), previous(nullptr)
+        next(NULL), previous(NULL)
     {}
 
     ~MyLinkedPanel()
@@ -162,7 +162,7 @@ public:
 
         mNodeDestination = mSceneMgr->getRootSceneNode()->createChildSceneNode();
         mNodeDestination->setPosition(Ogre::Vector3::ZERO);
-        mNodeToMove = nullptr;
+        mNodeToMove = NULL;
     }
 
     ~DemoLinkedPanels()
@@ -187,13 +187,13 @@ public:
                 mLoadingProgressbar->setValue(mLoadingProgressbar->getValue() + 0.005);
 
         // Do we need to move some node ?
-        if (mNodeDestination != nullptr && mNodeToMove != nullptr)
+        if (mNodeDestination != NULL && mNodeToMove != NULL)
         {
             if (!OgreSceneNodeUtils::moveSceneNode(mNodeToMove, 
                 mNodeDestination, evt.timeSinceLastFrame * 200))
             {
-                mNodeDestination = nullptr;
-                mNodeToMove = nullptr;
+                mNodeDestination = NULL;
+                mNodeToMove = NULL;
             }
         }
 
@@ -288,7 +288,7 @@ public:
 
     bool goNextPanel(Gui3D::PanelElement* e)
     {
-        if (mActualPanel->next == nullptr)
+        if (mActualPanel->next == NULL)
             return false;
         
         mActualPanel = mActualPanel->next;
@@ -301,7 +301,7 @@ public:
 
     bool goPreviousPanel(Gui3D::PanelElement* e)
     {
-        if (mActualPanel->previous == nullptr)
+        if (mActualPanel->previous == NULL)
             return false;
 
         mActualPanel->getGUILayer()->hide();
@@ -327,7 +327,7 @@ public:
             return false;
         }
 
-        return goNextPanel(nullptr);
+        return goNextPanel(NULL);
     }
 
     bool nicknameChangedCallback(Gui3D::PanelElement* e)
@@ -424,7 +424,7 @@ public:
         else
         {
             // It's loading
-            if (mLoadingStateText != nullptr)
+            if (mLoadingStateText != NULL)
             {
                 std::ostringstream s;
                 s << "Loading... (" << std::fixed << std::setprecision(2) << (1 - value)*100 << "% remains)";
@@ -789,7 +789,7 @@ public:
         mSummaryPanel = createSummaryPanel();
         mSummaryPanel->mNode->setPosition(Ogre::Vector3(0, 2, -10) + 6*shift);
         mSummaryPanel->mNode->yaw(Ogre::Degree(rotationDegree));
-        mSummaryPanel->next = nullptr;
+        mSummaryPanel->next = NULL;
         
         std::vector<struct panelCreationInfo> panels;
 
@@ -817,7 +817,7 @@ public:
             Ogre::Vector3(0, 2, -10) + 5*shift, 
             Ogre::Degree(rotationDegree)));
         
-        MyLinkedPanel* lastCreatedPanel = nullptr;
+        MyLinkedPanel* lastCreatedPanel = NULL;
 
         Ogre::SceneNode* m = mSceneMgr->getRootSceneNode()->createChildSceneNode();
         m->attachObject(mSceneMgr->createEntity("tudorhouse.mesh"));
@@ -829,7 +829,7 @@ public:
         {
             if (i > 0)
             {
-                Ogre::SceneNode* n = nullptr;
+                Ogre::SceneNode* n = NULL;
                 
                 n = mSceneMgr->getRootSceneNode()->createChildSceneNode();
                 n->setScale(0.03, 0.03, 0.03);
@@ -867,10 +867,10 @@ public:
             panel->mNode->yaw(panels[i].rotation);
             panel->previous = lastCreatedPanel;
             // Next will be set on next loop
-            panel->next = nullptr;
+            panel->next = NULL;
 
             // First panel created ? Setup things
-            if (lastCreatedPanel == nullptr)
+            if (lastCreatedPanel == NULL)
             {
                 mCameraNode->setPosition(panel->mPanelCameraNode->_getDerivedPosition());
 
@@ -988,7 +988,8 @@ public:
     }
 };
 
-int main()
+//int main()
+int WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, int )
 {
     DemoLinkedPanels* demo  = new DemoLinkedPanels();
     demo->mRoot->startRendering();
