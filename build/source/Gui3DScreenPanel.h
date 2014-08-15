@@ -65,13 +65,13 @@ public:
                                Ogre::Real y, 
                                size_t width,
                                size_t height,
-                               const Ogre::String& text);
+                               const std::wstring& text);
 
     virtual Caption* makeCaption(Ogre::Real x, 
                                  Ogre::Real y,
                                  size_t width,
                                  size_t height,
-                                 const Ogre::String& text,
+                                 const std::wstring& text,
                                  Gorilla::TextAlignment textAlign = Gorilla::TextAlign_Left,
                                  Gorilla::VerticalAlignment verticalAlign = Gorilla::VerticalAlign_Top);
 
@@ -84,20 +84,20 @@ public:
                                    Ogre::Real y,
                                    size_t width,
                                    size_t height,
-                                   const std::vector<Ogre::String>& items,
+                                   const std::vector<std::wstring>& items,
                                    unsigned int nbDisplayedElements);
 
     virtual InlineSelector* makeInlineSelector(Ogre::Real x,
                                                Ogre::Real y,
                                                size_t width,
                                                size_t height,
-                                               const std::vector<Ogre::String>& items);
+                                               const std::vector<std::wstring>& items);
 
     virtual Listbox* makeListbox(Ogre::Real x, 
                                  Ogre::Real y,
                                  size_t width,
                                  size_t height,
-                                 const std::vector<Ogre::String>& items,
+                                 const std::vector<std::wstring>& items,
                                  unsigned int nbDisplayedElements);
 
     virtual ProgressBar* makeProgressBar(Ogre::Real x, 
@@ -116,7 +116,7 @@ public:
                                    Ogre::Real y,
                                    size_t width,
                                    size_t height,
-                                   const Ogre::String& text);
+                                   const std::wstring& text);
 
 protected:
     Gorilla::Screen* mScreen;

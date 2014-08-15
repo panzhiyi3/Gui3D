@@ -35,7 +35,7 @@ Listbox::Listbox(Ogre::Real x,
                  Ogre::Real y,
                  size_t width,
                  size_t height,
-                 const vector<Ogre::String>& items,
+                 const vector<std::wstring>& items,
                  unsigned int nbDisplayedElements,
                  Container* parentContainer)
                  : VerticalSelector(x, y, width, height, items, nbDisplayedElements, parentContainer),
@@ -181,7 +181,7 @@ bool Listbox::isOver(const Ogre::Vector2& pos)
 }
 
 
-void Listbox::setCurrentValues(vector<Ogre::String>& itemsName)
+void Listbox::setCurrentValues(vector<std::wstring>& itemsName)
 {
     for (size_t i=0; i < itemsName.size(); i++)
     {
@@ -200,17 +200,17 @@ void Listbox::setCurrentValues(vector<Ogre::String>& itemsName)
 }
 
 
-void Listbox::setCurrentValue(Ogre::String& itemName)
+void Listbox::setCurrentValue(std::wstring& itemName)
 {
-    vector<Ogre::String> v;
+    vector<std::wstring> v;
     v.push_back(itemName);
     setCurrentValues(v);
 }
 
 
-vector<Ogre::String> Listbox::getValues()
+vector<std::wstring> Listbox::getValues()
 {
-    vector<Ogre::String> values;
+    vector<std::wstring> values;
     map<int, bool>::iterator it = mSelectedElements.begin();
     while (it != mSelectedElements.end())
     {

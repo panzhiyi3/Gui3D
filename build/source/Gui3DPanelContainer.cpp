@@ -239,7 +239,7 @@ Button* PanelContainer::makeButton(Ogre::Real x,
                                    Ogre::Real y, 
                                    size_t width,
                                    size_t height,
-                                   const Ogre::String& text)
+                                   const std::wstring& text)
 {
     Button* button = new Button(x, y, width, height, text, this);
     button->setBackgroundImage(getPanelColors()->buttonOveredSpriteName,
@@ -255,7 +255,7 @@ Caption* PanelContainer::makeCaption(Ogre::Real x,
                                      Ogre::Real y,
                                      size_t width,
                                      size_t height,
-                                     const Ogre::String& text,
+                                     const std::wstring& text,
                                      Gorilla::TextAlignment textAlign,
                                      Gorilla::VerticalAlignment verticalAlign)
 {
@@ -294,7 +294,7 @@ Combobox* PanelContainer::makeCombobox(Ogre::Real x,
                                        Ogre::Real y,
                                        size_t width,
                                        size_t height,
-                                       const vector<Ogre::String>& items,
+                                       const vector<std::wstring>& items,
                                        unsigned int nbDisplayedElements)
 {
     Combobox* combobox = new Combobox(x, y, width, height, items, nbDisplayedElements, this);
@@ -315,7 +315,7 @@ Listbox* PanelContainer::makeListbox(Ogre::Real x,
                                      Ogre::Real y,
                                      size_t width,
                                      size_t height,
-                                     const vector<Ogre::String>& items,
+                                     const vector<std::wstring>& items,
                                      unsigned int nbDisplayedElements)
 {
     Listbox* listBox = new Listbox(x, y, width, height, items, nbDisplayedElements, this);
@@ -336,7 +336,7 @@ InlineSelector* PanelContainer::makeInlineSelector(Ogre::Real x,
                                                    Ogre::Real y,
                                                    size_t width,
                                                    size_t height,
-                                                   const vector<Ogre::String>& items)
+                                                   const vector<std::wstring>& items)
 {
     InlineSelector* inlineSelector = new InlineSelector(x, y, width, height, items, this);
     inlineSelector->setBackgroundImageButtons(getPanelColors()->inlineselectorButtonPreviousOveredSpriteName,
@@ -383,7 +383,7 @@ TextZone* PanelContainer::makeTextZone(Ogre::Real x,
                                        Ogre::Real y,
                                        size_t width,
                                        size_t height,
-                                       const Ogre::String& text)
+                                       const std::wstring& text)
 {
     TextZone* textZone = new TextZone(x, y, width, height, text, this);
     addItem(textZone);

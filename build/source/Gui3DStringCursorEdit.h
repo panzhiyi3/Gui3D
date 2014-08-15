@@ -42,19 +42,19 @@ class StringCursorEdit
 public:
     StringCursorEdit();
 
-    StringCursorEdit(Ogre::String, char cursor);
+    StringCursorEdit(std::wstring, wchar_t cursor);
     
     ~StringCursorEdit();
     
     /** \brief Return the string without the cursor symbol
     */
-    Ogre::String getStringWithoutCursor();
+    std::wstring getStringWithoutCursor();
     
     /** \brief Return the string with the cursor symbol
     */
-    Ogre::String getStringWithCursor();
+    std::wstring getStringWithCursor();
     
-    void injectKey(char key);
+    void injectKey(wchar_t key);
     
     /** \brief Move the cursor to the right in the string
     */
@@ -67,11 +67,11 @@ public:
     /** \brief Erase the current text and replace it with a new one.
     The cursor position is set at the end of the new text
     */
-    void setText(const Ogre::String text);
+    void setText(const std::wstring &text);
 
     /** \brief Set the cursor symbol
     */
-    void setCursor(char cursor);
+    void setCursor(wchar_t cursor);
     
     /** \brief Remove a letter which is at the left of the cursor and
     move the cursor to the left (as in all OS input)
@@ -87,7 +87,7 @@ public:
     void setMaxLength(int maxLength);
 
 protected:
-    Ogre::String mStr; //!< \brief The string itself
+    std::wstring mStr; //!< \brief The string itself
 
     unsigned short int mCursorPosition; //!< \brief The cursor position in the string
     

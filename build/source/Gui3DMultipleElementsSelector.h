@@ -44,7 +44,7 @@ public:
                              Ogre::Real y,
                              size_t width,
                              size_t height,
-                             const std::vector<Ogre::String>& items,
+                             const std::vector<std::wstring>& items,
                              Container* parentContainer);
 
     ~MultipleElementsSelector();
@@ -59,7 +59,7 @@ public:
 
     /** \brief Add an item to the container
     */
-    virtual void addItem(Ogre::String itemName);
+    virtual void addItem(std::wstring itemName);
 
     void injectTimeAndMousePosition(double time, const Ogre::Vector2& pos);
 
@@ -110,7 +110,7 @@ protected:
         MULTIPLE_ELEMENT_SELECTOR_NO_ELEMENT
     };
 
-    std::vector<Ogre::String> mValues; //!< \brief Contains all the string elements that are in the combobox
+    std::vector<std::wstring> mValues; //!< \brief Contains all the string elements that are in the combobox
 
     /** \brief The actual overed element.
     If it's >= 0, it's a selector value element, else it's a speial case.

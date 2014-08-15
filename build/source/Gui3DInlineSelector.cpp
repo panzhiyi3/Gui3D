@@ -39,12 +39,13 @@ InlineSelector::InlineSelector(Ogre::Real x,
                                Ogre::Real y,
                                size_t width,
                                size_t height,
-                               const vector<Ogre::String>& items,
+                               const vector<std::wstring>& items,
                                Container* parentContainer)
                                : MultipleElementsSelector(x, y, width, height, items, parentContainer), 
                                   mIndiceSelectedElement(-1)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->inlineselectorTextSize, 0, 0, "");
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->inlineselectorTextSize, 0, 0, "");
+    mCaption = mParentContainer->getGUILayer()->createCaption("", 0, 0, L"");
     mCaption->align(Gorilla::TextAlign_Centre);
     mCaption->vertical_align(Gorilla::VerticalAlign_Middle);
     mCaption->background(getColors()->transparent);
@@ -56,10 +57,10 @@ InlineSelector::InlineSelector(Ogre::Real x,
     mDesign->border(getColors()->inlineselectorBorderSize,
                     getColors()->inlineselectorBorder);
 
-    mPreviousElementsButton->text("<");
+    mPreviousElementsButton->text(L"<");
     mPreviousElementsButton->setPressedCallback(this, &InlineSelector::goPreviousElementCallback);
 
-    mNextElementsButton->text(">");
+    mNextElementsButton->text(L">");
     mNextElementsButton->setPressedCallback(this, &InlineSelector::goNextElementCallback);
 
     if (items.size() > 0)
@@ -188,7 +189,7 @@ void InlineSelector::setPosition(int left, int top)
 }
 
 
-void InlineSelector::setCurrentValue(Ogre::String itemName)
+void InlineSelector::setCurrentValue(std::wstring itemName)
 {
     for (size_t i=0; i < mValues.size(); i++)
     {
@@ -208,10 +209,10 @@ Ogre::Vector2 InlineSelector::getPosition()
 }
 
 
-Ogre::String InlineSelector::getValue()
+std::wstring InlineSelector::getValue()
 {
     if (mIndiceSelectedElement == INLINE_SELECTOR_NO_SELECTED_ELEMENT)
-        return "";
+        return L"";
     return mValues[mIndiceSelectedElement];
 }
 

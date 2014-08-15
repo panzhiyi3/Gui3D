@@ -48,7 +48,7 @@ public:
             Ogre::Real y,
             size_t width,
             size_t height,
-            const Ogre::String& text, 
+            const std::wstring& text, 
             Container* parentContainer,
             Gorilla::TextAlignment textAlign = Gorilla::TextAlign_Left,
             Gorilla::VerticalAlignment verticalAlign = Gorilla::VerticalAlign_Top);
@@ -79,9 +79,9 @@ public:
 
     void highlight();
 
-    void text(Ogre::String s);
+    void text(const std::wstring &s);
 
-    Ogre::String text();
+    std::wstring text();
 
     /** \brief Set the background to a sprite from the texture atlas.
         note.

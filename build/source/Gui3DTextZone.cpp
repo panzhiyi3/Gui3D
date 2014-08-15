@@ -35,13 +35,13 @@ TextZone::TextZone(Ogre::Real x,
                    Ogre::Real y,
                    size_t width,
                    size_t height,
-                   const Ogre::String& text, 
+                   const std::wstring& text, 
                    Container* parentContainer)
-                   : PanelElementCallback(parentContainer), stringCursorEdit(text, '|'),
+                   : PanelElementCallback(parentContainer), stringCursorEdit(text, L'|'),
                      showStringWithCursor(false)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->textzoneTextSize, x, y, 
-                                                              stringCursorEdit.getStringWithoutCursor());
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->textzoneTextSize, x, y, stringCursorEdit.getStringWithoutCursor());
+    mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, stringCursorEdit.getStringWithoutCursor());
     mCaption->align(Gorilla::TextAlign_Left);
     mCaption->vertical_align(Gorilla::VerticalAlign_Top);
     mCaption->background(getColors()->transparent);
@@ -83,7 +83,7 @@ void TextZone::setMaxStringLength(int maxLength)
 }
 
 
-void TextZone::setValue(Ogre::String s)
+void TextZone::setValue(const std::wstring &s)
 {
     stringCursorEdit.setText(s);
     mCaption->text(s);
@@ -91,7 +91,7 @@ void TextZone::setValue(Ogre::String s)
 }
 
 
-Ogre::String TextZone::getValue()
+std::wstring TextZone::getValue()
 {
     return stringCursorEdit.getStringWithoutCursor();
 }
@@ -184,7 +184,7 @@ void TextZone::injectTimeAndMousePosition(double time, const Ogre::Vector2& pos)
         // Every 1/2 sec, make the cursor flash on and off
         if (clock.clockAction(0.5, time))
         {
-            Ogre::String str;
+            std::wstring str;
             str = (showStringWithCursor) ? stringCursorEdit.getStringWithoutCursor() :
                                            stringCursorEdit.getStringWithCursor();
             mCaption->text(str);

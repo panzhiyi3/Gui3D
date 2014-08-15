@@ -52,7 +52,7 @@ public:
                    Ogre::Real y,
                    size_t width,
                    size_t height,
-                   const std::vector<Ogre::String>& items,
+                   const std::vector<std::wstring>& items,
                    Container* parentContainer);
     
     ~InlineSelector();
@@ -71,14 +71,14 @@ public:
 
     /** \brief Return the value of the combobox
     */
-    Ogre::String getValue();
+    std::wstring getValue();
 
     Ogre::Vector2 getPosition();
 
     /** \brief Set the current value of this selector. If the element 
     isn't found, nothing will be changed.
     */
-    void setCurrentValue(Ogre::String itemName);
+    void setCurrentValue(std::wstring itemName);
 
     void highlight();
 

@@ -107,7 +107,7 @@ Button* ScreenPanel::makeButton(Ogre::Real x,
                                 Ogre::Real y, 
                                 size_t width,
                                 size_t height,
-                                const Ogre::String& text)
+                                const std::wstring& text)
 {
     return PanelContainer::makeButton(mStartPosition.x + x, mStartPosition.y + y, 
                                       width, height, 
@@ -119,7 +119,7 @@ Caption* ScreenPanel::makeCaption(Ogre::Real x,
                                   Ogre::Real y,
                                   size_t width,
                                   size_t height,
-                                  const Ogre::String& text,
+                                  const std::wstring& text,
                                   Gorilla::TextAlignment textAlign,
                                   Gorilla::VerticalAlignment verticalAlign)
 {
@@ -143,7 +143,7 @@ Combobox* ScreenPanel::makeCombobox(Ogre::Real x,
                                     Ogre::Real y,
                                     size_t width,
                                     size_t height,
-                                    const vector<Ogre::String>& items,
+                                    const vector<std::wstring>& items,
                                     unsigned int nbDisplayedElements)
 {
     return PanelContainer::makeCombobox(mStartPosition.x + x, mStartPosition.y + y, 
@@ -156,7 +156,7 @@ Listbox* ScreenPanel::makeListbox(Ogre::Real x,
                                   Ogre::Real y,
                                   size_t width,
                                   size_t height,
-                                  const vector<Ogre::String>& items,
+                                  const vector<std::wstring>& items,
                                   unsigned int nbDisplayedElements)
 {
     return PanelContainer::makeListbox(mStartPosition.x + x, mStartPosition.y + y, 
@@ -169,7 +169,7 @@ InlineSelector* ScreenPanel::makeInlineSelector(Ogre::Real x,
                                                 Ogre::Real y,
                                                 size_t width,
                                                 size_t height,
-                                                const vector<Ogre::String>& items)
+                                                const vector<std::wstring>& items)
 {
     return PanelContainer::makeInlineSelector(mStartPosition.x + x, mStartPosition.y + y, 
                                               width, height, 
@@ -204,7 +204,7 @@ TextZone* ScreenPanel::makeTextZone(Ogre::Real x,
                                     Ogre::Real y,
                                     size_t width,
                                     size_t height,
-                                    const Ogre::String& text)
+                                    const std::wstring& text)
 {
     return PanelContainer::makeTextZone(mStartPosition.x + x, mStartPosition.y + y, 
                                         width, height, 

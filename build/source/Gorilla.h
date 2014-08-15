@@ -37,6 +37,7 @@ THE SOFTWARE.
 #include <OGRE/Ogre.h>
 
 #include "Gui3DConfig.h"
+#include "FontManager.h"
 
 #ifndef GORILLA_USES_EXCEPTIONS
 #  define GORILLA_USES_EXCEPTIONS 0
@@ -400,7 +401,7 @@ namespace Gorilla
     desc.
     Main singleton class for Gorilla
     */
-    class Silverback : public Ogre::Singleton<Silverback>, public Ogre::GeneralAllocatedObject, public Ogre::FrameListener
+    class Silverback : public Ogre::Singleton<Silverback>, public Ogre::GeneralAllocatedObject, public Ogre::FrameListener, public IFontCallback
     {
 
     public:
@@ -416,6 +417,12 @@ namespace Gorilla
         Silverback destructor.
         */
         ~Silverback();
+
+        /*! function. loadAtlas
+        desc.
+        Get a reference of FontManager
+        */
+        FontManager &getFontManager();
 
         /*! function. loadAtlas
         desc.
@@ -461,8 +468,11 @@ namespace Gorilla
         */
         bool frameStarted(const Ogre::FrameEvent& evt);
 
+        virtual void onFontTextureDirty(const Ogre::String &texName);
+
     protected:
 
+        FontManager                            mFontManager;
         std::map<Ogre::String, TextureAtlas*>  mAtlases;
         std::vector<Screen*>                   mScreens;
         std::vector<ScreenRenderable*>         mScreenRenderables;
@@ -873,6 +883,8 @@ namespace Gorilla
         friend class Silverback;
         friend class Layer;
 
+        void updateFontTexture(const Ogre::String &texName);
+
         /*! desc. getTexelOffsetX
         Helper function to get horizontal texel offset.
         */
@@ -1223,25 +1235,25 @@ namespace Gorilla
         desc.
         Creates a caption
         */
-        Caption*         createCaption(Ogre::uint glyphDataIndex, Ogre::Real x, Ogre::Real y, const Ogre::String& text);
+        Caption *createCaption(const Ogre::String &fontName, Ogre::Real x, Ogre::Real y, const std::wstring& text);
 
         /*! function. destroyCaption
         desc.
         Removes a caption from the layer and *deletes* it.
         */
-        void               destroyCaption(Caption*);
+        void destroyCaption(Caption*);
 
         /*! function. destroyAllCaptions
         desc.
         Removes all caption from the layer and *deletes* them.
         */
-        void               destroyAllCaptions();
+        void destroyAllCaptions();
 
         /*! function. getCaptions
         desc.
         Get an iterator to all the quad lists in this layer.
         */
-        CaptionIterator  getCaptions()
+        CaptionIterator getCaptions()
         {
             return CaptionIterator(mCaptions.begin(), mCaptions.end());
         }
@@ -1250,25 +1262,25 @@ namespace Gorilla
         desc.
         Creates a markup text
         */
-        MarkupText*         createMarkupText(Ogre::uint defaultGlyphIndex, Ogre::Real x, Ogre::Real y, const Ogre::String& text);
+        MarkupText *createMarkupText(Ogre::uint defaultGlyphIndex, Ogre::Real x, Ogre::Real y, const Ogre::String& text);
 
         /*! function. destroyMarkupText
         desc.
         Removes a markup text from the layer and *deletes* it.
         */
-        void               destroyMarkupText(MarkupText*);
+        void destroyMarkupText(MarkupText *);
 
         /*! function. destroyAllMarkupTexts
         desc.
         Removes all markup text from the layer and *deletes* them.
         */
-        void               destroyAllMarkupTexts();
+        void destroyAllMarkupTexts();
 
         /*! function. getMarkupTexts
         desc.
         Get an iterator to all the quad lists in this layer.
         */
-        MarkupTextIterator  getMarkupTexts()
+        MarkupTextIterator getMarkupTexts()
         {
             return MarkupTextIterator(mMarkupTexts.begin(), mMarkupTexts.end());
         }
@@ -2498,20 +2510,20 @@ namespace Gorilla
         */
         void font(size_t font_index)
         {
-            mGlyphData      = mLayer->_getGlyphData(font_index);
-            if (mGlyphData == 0)
-            {
-                mDirty        = false;
-#if GORILLA_USES_EXCEPTIONS == 1
-                std::ostringstream s;
-                s << "Glyph data [Font." << font_index << "] not found";
-                OGRE_EXCEPT( Ogre::Exception::ERR_ITEM_NOT_FOUND, s.str(), __FUNC__ );
-#else
-                return;
-#endif
-            }
-            mDirty = true;
-            mLayer->_markDirty();
+//            mGlyphData      = mLayer->_getGlyphData(font_index);
+//            if (mGlyphData == 0)
+//            {
+//                mDirty        = false;
+//#if GORILLA_USES_EXCEPTIONS == 1
+//                std::ostringstream s;
+//                s << "Glyph data [Font." << font_index << "] not found";
+//                OGRE_EXCEPT( Ogre::Exception::ERR_ITEM_NOT_FOUND, s.str(), __FUNC__ );
+//#else
+//                return;
+//#endif
+//            }
+//            mDirty = true;
+ //           mLayer->_markDirty();
         }
         /*! function. intersects
         desc.
@@ -2590,7 +2602,7 @@ namespace Gorilla
         desc.
         Set the maximum width of the text can draw into.
         */
-        void  width(const Ogre::Real& width)
+        void  width(const Ogre::Real &width)
         {
             mWidth = width;
             mDirty = true;
@@ -2610,9 +2622,42 @@ namespace Gorilla
         desc.
         Set the maximum height of the text can draw into.
         */
-        void  height(const Ogre::Real& height)
+        void  height(const Ogre::Real &height)
         {
             mHeight = height;
+            mDirty = true;
+            mLayer->_markDirty();
+        }
+
+        /*! function. letterSpacing
+        desc.
+        Set the height between two lines.
+        */
+        void  letterSpacing(Ogre::Real letterSpacing)
+        {
+            mLetterSpacing = letterSpacing;
+            mDirty = true;
+            mLayer->_markDirty();
+        }
+
+        /*! function. lineSpacing
+        desc.
+        Set the width between two chars.
+        */
+        void  lineHeight(Ogre::Real lineHeight)
+        {
+            mLineHeight = lineHeight;
+            mDirty = true;
+            mLayer->_markDirty();
+        }
+
+        /*! function. spaceLength
+        desc.
+        Set the width os char "space".
+        */
+        void  spaceLength(Ogre::Real spaceLength)
+        {
+            mSpaceLength = spaceLength;
             mDirty = true;
             mLayer->_markDirty();
         }
@@ -2621,7 +2666,7 @@ namespace Gorilla
         desc.
         Get the text indented to show.
         */
-        Ogre::String  text() const
+        std::wstring  text() const
         {
             return mText;
         }
@@ -2630,7 +2675,7 @@ namespace Gorilla
         desc.
         Set the text to show.
         */
-        void  text(const Ogre::String& text)
+        void  text(const std::wstring& text)
         {
             mText = text;
             mDirty = true;
@@ -2810,7 +2855,7 @@ namespace Gorilla
 
         void               _calculateDrawSize(Ogre::Vector2& size);
 
-        Caption(Ogre::uint glyphDataIndex, Ogre::Real left, Ogre::Real top, const Ogre::String& caption, Layer* parent);
+        Caption(const Ogre::String &fontName, Ogre::Real left, Ogre::Real top, const std::wstring& caption, Layer* parent);
 
         ~Caption() {}
 
@@ -2818,19 +2863,21 @@ namespace Gorilla
 
         bool                  mFixedWidth;
         Layer*                mLayer;
-        GlyphData*            mGlyphData;
+        //GlyphData*            mGlyphData;
         Ogre::Real            mLeft, mTop, mWidth, mHeight;
+        Ogre::Real            mLetterSpacing;
+        Ogre::Real            mLineHeight;
+        Ogre::Real            mSpaceLength;
         TextAlignment         mAlignment;
         VerticalAlignment     mVerticalAlign;
-        Ogre::String          mText;
+        std::wstring          mText;
         Ogre::ColourValue     mColour, mBackground;
         bool                  mDirty;
         buffer<Vertex>        mVertices;
         size_t                mClippedLeftIndex, mClippedRightIndex;
 
     private:
-        Ogre::Real _getAdvance(Glyph* glyph, Ogre::Real kerning);
-
+        Ogre::Real _getAdvance(const Font::GlyphInfo *glyph, Ogre::Real pixelWidth, Ogre::Real kerning);
     };
 
     /* class. Caption

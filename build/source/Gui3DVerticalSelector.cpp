@@ -47,7 +47,7 @@ VerticalSelector::VerticalSelector(Ogre::Real x,
                                    Ogre::Real y,
                                    size_t width,
                                    size_t height,
-                                   const vector<Ogre::String>& items,
+                                   const vector<std::wstring>& items,
                                    unsigned int nbDisplayedElements,
                                    Container* parentContainer)
                                    : MultipleElementsSelector(x, y, width, height, items, parentContainer),
@@ -55,14 +55,14 @@ VerticalSelector::VerticalSelector(Ogre::Real x,
 {
     mMaxNumberOfVisibleElements = std::min(nbDisplayedElements, items.size());
 
-    mPreviousElementsButton->text("-");
+    mPreviousElementsButton->text(L"-");
     mPreviousElementsButton->setPressedCallback(this, &VerticalSelector::allElementsGoDownCallback);
 
-    mNextElementsButton->text("+");
+    mNextElementsButton->text(L"+");
     mNextElementsButton->setPressedCallback(this, &VerticalSelector::allElementsGoTopCallback);
     
     for (size_t i=0; i < mMaxNumberOfVisibleElements; i++)
-        mCaptions.push_back(new Caption(0, 0, 1, 1, "", 
+        mCaptions.push_back(new Caption(0, 0, 1, 1, L"",
                                         mParentContainer,
                                         Gorilla::TextAlign_Centre,
                                         Gorilla::VerticalAlign_Middle));

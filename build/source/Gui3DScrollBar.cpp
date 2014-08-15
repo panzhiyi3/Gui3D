@@ -47,7 +47,8 @@ ScrollBar::ScrollBar(Ogre::Real x,
                        mValuePrecision(0), mFixedValuePrecision(false),
                        mCallCallbackOnSelectingValue(false), mDisplayValue(true)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->scrollbarTextSize, x, y, "");
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->scrollbarTextSize, x, y, "");
+    mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, L"");
     mCaption->align(Gorilla::TextAlign_Centre);
     mCaption->vertical_align(Gorilla::VerticalAlign_Middle);
     mCaption->background(getColors()->transparent);
@@ -261,7 +262,7 @@ void ScrollBar::setDisplayValue(bool displayValue)
     mDisplayValue = displayValue;
     
     if (!mDisplayValue)
-        mCaption->text("");
+        mCaption->text(L"");
     else
         _actualizeDisplayedValue();
 }
@@ -371,7 +372,7 @@ void ScrollBar::_actualizeDisplayedValue()
     if (!mDisplayValue)
         return;
 
-    ostringstream s;
+    wostringstream s;
     if (mFixedValuePrecision)
         s << fixed;
     

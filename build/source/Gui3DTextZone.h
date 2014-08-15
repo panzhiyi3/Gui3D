@@ -53,7 +53,7 @@ public:
              Ogre::Real y,
              size_t width,
              size_t height,
-             const Ogre::String& text,
+             const std::wstring& text,
              Container* parentContainer);
 
     ~TextZone();
@@ -70,7 +70,7 @@ public:
     void injectMouseReleased(const OIS::MouseEvent& evt, 
                              OIS::MouseButtonID id);
 
-    Ogre::String getValue();
+    std::wstring getValue();
 
     Ogre::Vector2 getPosition();
 
@@ -86,7 +86,7 @@ public:
 
     /** \brief Set the value of the text zone
     */
-    void setValue(Ogre::String s);
+    void setValue(const std::wstring &s);
 
     void setSize(int width, int height);
 

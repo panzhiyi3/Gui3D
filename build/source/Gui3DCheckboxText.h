@@ -46,7 +46,7 @@ public:
                  Ogre::Real y,
                  size_t width,
                  size_t height, 
-                 char checkedSymbol,
+                 wchar_t checkedSymbol,
                  Container* parentContainer);
 
     ~CheckboxText();
@@ -56,7 +56,7 @@ public:
     void setSize(int width, int height);
 
 protected:
-    char mCheckedSymbol;
+    wchar_t mCheckedSymbol;
 
     void _checkUnOver();
 

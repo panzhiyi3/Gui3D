@@ -46,7 +46,16 @@ template<> Gorilla::Silverback* Ogre::Singleton<Gorilla::Silverback>::msSingleto
     VERTEX.uv.x = UV.x;                                              \
     VERTEX.uv.y = UV.y;                                              \
     VERTEX.colour = COLOUR;                                          \
-    VERTICES.push_back(VERTEX);                                       
+    VERTICES.push_back(VERTEX);
+
+#define PUSH_VERTEX2(VERTICES, VERTEX, X, Y, U, V, COLOUR)   \
+    VERTEX.position.x = X;                                           \
+    VERTEX.position.y = Y;                                           \
+    VERTEX.position.z = 0;                                           \
+    VERTEX.uv.x = U;                                              \
+    VERTEX.uv.y = V;                                              \
+    VERTEX.colour = COLOUR;                                          \
+    VERTICES.push_back(VERTEX);
 
 #define PUSH_TRIANGLE(VERTICES, VERTEX, A, B, C, UV, COLOUR)       \
     PUSH_VERTEX(VERTICES, VERTEX, A.x, A.y, UV, COLOUR) \
@@ -487,9 +496,13 @@ namespace Gorilla
         pass->setLightingEnabled(false);
         pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
 
-        Ogre::TextureUnitState* texUnit = pass->createTextureUnitState();
+        Ogre::TextureUnitState *texUnit = pass->createTextureUnitState();
         texUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
         //texUnit->setTextureFiltering(Ogre::FO_NONE, Ogre::FO_NONE, Ogre::FO_NONE);
+        texUnit->setTextureFiltering(Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC);
+
+        texUnit = pass->createTextureUnitState();
+        texUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
         texUnit->setTextureFiltering(Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC);
 
         return d2Material;
@@ -532,11 +545,10 @@ namespace Gorilla
         return d3Material;
     }
 
-
     void  TextureAtlas::_create2DMaterial()
     {
-
         std::string matName = "Gorilla2D." + mTexture->getName();
+        //std::string matName = "Gorilla2D";
         m2DMaterial = Ogre::MaterialManager::getSingletonPtr()->getByName(matName);
 
         if (m2DMaterial.isNull())
@@ -544,7 +556,7 @@ namespace Gorilla
 
         m2DPass = m2DMaterial->getTechnique(0)->getPass(0);
         m2DPass->getTextureUnitState(0)->setTextureName(mTexture->getName());
-
+        m2DPass->getTextureUnitState(1)->setTextureName("GUI3D_FreeTypeFontTexturedefault");
     }
 
     void  TextureAtlas::_create3DMaterial()
@@ -666,25 +678,21 @@ namespace Gorilla
 
     GlyphData::~GlyphData()
     {
-
         for (std::vector<Glyph*>::iterator it = mGlyphs.begin(); it != mGlyphs.end(); it++)
         {
             OGRE_DELETE (*it);
         }
-
     }
 
 
     Silverback::Silverback()
     {
-
         Ogre::Root::getSingletonPtr()->addFrameListener(this);
-
+        mFontManager.setCallback(this);
     }
 
     Silverback::~Silverback()
     {
-
         Ogre::Root::getSingletonPtr()->removeFrameListener(this);
 
         // Delete Screens.
@@ -703,7 +711,11 @@ namespace Gorilla
         for (std::map<Ogre::String, TextureAtlas*>::iterator it = mAtlases.begin(); it != mAtlases.end(); it++)
             OGRE_DELETE (*it).second;
         mAtlases.clear();
+    }
 
+    FontManager &Silverback::getFontManager()
+    {
+        return mFontManager;
     }
 
     void Silverback::loadAtlas(const Ogre::String &name, const Ogre::String &group)
@@ -750,6 +762,15 @@ namespace Gorilla
 
         return true;
     }
+
+    void Silverback::onFontTextureDirty(const Ogre::String &texName)
+    {
+        for(std::vector<Screen*>::iterator it = mScreens.begin(); it != mScreens.end(); it++)
+        {
+            (*it)->updateFontTexture(texName);
+        }
+    }
+
 
     LayerContainer::LayerContainer(TextureAtlas* atlas)
         : mIndexRedrawAll(false), mAtlas(atlas)
@@ -1049,6 +1070,12 @@ namespace Gorilla
         mSceneMgr->removeRenderQueueListener(this);
     }
 
+    void Screen::updateFontTexture(const Ogre::String &texName)
+    {
+        Ogre::TextureUnitState *texunit = mAtlas->get2DPass()->getTextureUnitState(1);
+        if(texunit)
+            texunit->setTextureName(texName);
+    }
 
     void Screen::renderQueueEnded(Ogre::uint8 queueGroupId, const Ogre::String& invocation, bool& repeatThisInvocation)
     {
@@ -1337,9 +1364,9 @@ namespace Gorilla
         mQuadLists.clear();
     }
 
-    Caption* Layer::createCaption(Ogre::uint glyphDataIndex, Ogre::Real x, Ogre::Real y, const Ogre::String& text)
+    Caption* Layer::createCaption(const Ogre::String &fontName, Ogre::Real x, Ogre::Real y, const std::wstring& text)
     {
-        Caption* caption = OGRE_NEW Caption(glyphDataIndex,x, y, text, this);
+        Caption* caption = OGRE_NEW Caption(fontName, x, y, text, this);
         mCaptions.push_back(caption);
         return caption;
     }
@@ -2025,16 +2052,17 @@ namespace Gorilla
     }
 
 
-    Caption::Caption(Ogre::uint glyphDataIndex, Ogre::Real left, Ogre::Real top, const Ogre::String& caption, Layer* layer)
+    Caption::Caption(const Ogre::String &fontName, Ogre::Real left, Ogre::Real top, const std::wstring& caption, Layer* layer)
         : mLayer(layer)
     {
-        mGlyphData      = mLayer->_getGlyphData(glyphDataIndex);
-        if (mGlyphData == 0)
+        //mGlyphData      = mLayer->_getGlyphData(glyphDataIndex);
+        //if (mGlyphData == 0)
+        if(!Silverback::getSingleton().getFontManager().getDefaultFont())
         {
             mDirty        = false;
 #if GORILLA_USES_EXCEPTIONS == 1
             std::ostringstream s;
-            s << "Glyph data [Font." << glyphDataIndex << "] not found";
+            s << "Font [Name:\"" << fontName << "\"] not found";
             OGRE_EXCEPT( Ogre::Exception::ERR_ITEM_NOT_FOUND, s.str(), __FUNC__ );
 #else
             return;
@@ -2046,6 +2074,9 @@ namespace Gorilla
         mTop            = top;
         mWidth          = 0.0f;
         mHeight         = 0.0f;
+        mLetterSpacing  = 0.0f;
+        mLineHeight    = 0.0f;
+        mSpaceLength    = Silverback::getSingleton().getFontManager().getDefaultFont()->getPixelSize();
         mText           = caption;
         mColour         = Ogre::ColourValue::White;
         mBackground.a   = 0.0f;
@@ -2055,55 +2086,66 @@ namespace Gorilla
     }
 
     void Caption::_calculateDrawSize(Ogre::Vector2& retSize)
-    { 
-
+    {
         Ogre::Real cursor = 0,
             kerning = 0;
 
-        unsigned char thisChar = 0, lastChar = 0;
-        Glyph* glyph = 0;
-        retSize.x = 0;
-        retSize.y = mGlyphData->mLineHeight;
+        FontManager &fontMgr = Silverback::getSingleton().getFontManager();
+        Font *font = fontMgr.getDefaultFont();
 
-        for (size_t i=0;i < mText.length();i++)
+        if(font)
         {
-            thisChar = mText[i];
+            unsigned wchar_t thisChar = 0, lastChar = 0;
+            const Font::GlyphInfo *glyph = 0;
+            retSize.x = 0;
+            retSize.y = mLineHeight;
 
-            if (thisChar == ' ')
+            for (size_t i=0;i < mText.length();i++)
             {
+                thisChar = mText[i];
+
+                if (thisChar == ' ')
+                {
+                    lastChar = thisChar;
+                    cursor += mSpaceLength;
+                    continue;
+                }
+
+                //if ( thisChar < mGlyphData->mRangeBegin || thisChar > mGlyphData->mRangeEnd )
+                if(!font->isCodeIdInRange(thisChar))
+                {
+                    lastChar = 0;
+                    continue;
+                }
+
+                //glyph = mGlyphData->getGlyph(thisChar);
+                glyph = fontMgr.getGlyphInfo(thisChar);
+                if(!glyph)
+                    continue;
+                //kerning = glyph->getKerning(lastChar);
+                //if (kerning == 0)
+                kerning = mLetterSpacing;
+
+                cursor  += _getAdvance(glyph, mSpaceLength, kerning);
                 lastChar = thisChar;
-                cursor += mGlyphData->mSpaceLength;
-                continue;
+
             }
 
-            if (  thisChar < mGlyphData->mRangeBegin || thisChar > mGlyphData->mRangeEnd  )
-            {
-                lastChar = 0;
-                continue;
-            }
-
-            glyph = mGlyphData->getGlyph(thisChar);
-            if (glyph == 0)
-                continue;
-            kerning = glyph->getKerning(lastChar);
-            if (kerning == 0)
-                kerning = mGlyphData->mLetterSpacing;
-
-            cursor  += _getAdvance(glyph, kerning);
-            lastChar = thisChar;
-
-        } // for
-
-        retSize.x = cursor - kerning;
+            retSize.x = cursor - kerning;
+        }
     }
 
     void Caption::_redraw()
     {
-
         if (mDirty == false)
             return;
 
         mVertices.remove_all();
+
+        FontManager &fontMgr = Silverback::getSingleton().getFontManager();
+        Font *font = fontMgr.getDefaultFont();
+        if(!font)
+            return;
 
         Ogre::Vector2 uv = mLayer->_getSolidUV();
 
@@ -2121,7 +2163,7 @@ namespace Gorilla
 
         Ogre::Real left = 0, top = 0, right = 0, bottom = 0, cursorX = 0, cursorY = 0, kerning = 0, texelOffsetX = mLayer->_getTexelX(), texelOffsetY = mLayer->_getTexelY();
         Ogre::Vector2 knownSize;
-        Glyph* glyph = 0;
+        const Font::GlyphInfo *glyph = 0;
 
         bool clipLeft = false, clipRight = false;
         Ogre::Real clipLeftPos = 0, clipRightPos = 0;
@@ -2165,11 +2207,11 @@ namespace Gorilla
         if (mVerticalAlign == VerticalAlign_Top)
             cursorY = mTop;
         else if (mVerticalAlign == VerticalAlign_Middle)
-            cursorY = mTop + (mHeight * 0.5) - (mGlyphData->mLineHeight * 0.5);
+            cursorY = mTop + (mHeight * 0.5) - (mLineHeight * 0.5);
         else if (mVerticalAlign == VerticalAlign_Bottom)
-            cursorY = mTop +  mHeight - mGlyphData->mLineHeight;
+            cursorY = mTop +  mHeight - mLineHeight;
 
-        unsigned char thisChar = 0, lastChar = 0;
+        unsigned wchar_t thisChar = 0, lastChar = 0;
         Vertex temp;
         mClippedLeftIndex = std::string::npos;
         mClippedRightIndex = std::string::npos;
@@ -2184,27 +2226,33 @@ namespace Gorilla
             if (thisChar == ' ')
             {
                 lastChar = thisChar;
-                cursorX += mGlyphData->mSpaceLength;
+                cursorX += mSpaceLength;
                 continue;
             }
 
-            if (  thisChar < mGlyphData->mRangeBegin || thisChar > mGlyphData->mRangeEnd  )
+            //if (  thisChar < mGlyphData->mRangeBegin || thisChar > mGlyphData->mRangeEnd  )
+            if(!font->isCodeIdInRange(thisChar))
             {
                 lastChar = 0;
                 continue;
             }
 
-            glyph = mGlyphData->getGlyph(thisChar);
+            //glyph = mGlyphData->getGlyph(thisChar);
+            glyph = fontMgr.getGlyphInfo(thisChar);
             if (glyph == 0)
                 continue;
-            kerning = glyph->getKerning(lastChar);
-            if (kerning == 0)
-                kerning = mGlyphData->mLetterSpacing;
+            //kerning = glyph->getKerning(lastChar);
+            //if (kerning == 0)
+            kerning = mLetterSpacing;
 
+            //left = cursorX - texelOffsetX;
+            //top = cursorY - texelOffsetY + glyph->verticalOffset;
+            //right = left + glyph->glyphWidth + texelOffsetX;
+            //bottom = top + glyph->glyphHeight + texelOffsetY;
             left = cursorX - texelOffsetX;
-            top = cursorY - texelOffsetY + glyph->verticalOffset;
-            right = left + glyph->glyphWidth + texelOffsetX;
-            bottom = top + glyph->glyphHeight + texelOffsetY;
+            top = cursorY - texelOffsetY;
+            right = left + glyph->advance + texelOffsetX;
+            bottom = top + glyph->advance + texelOffsetY;
 
             if (clipLeft)
             {
@@ -2212,7 +2260,7 @@ namespace Gorilla
                 {
                     if (mClippedLeftIndex == std::string::npos)
                         mClippedLeftIndex = i;
-                    cursorX  += _getAdvance(glyph, kerning);
+                    cursorX  += _getAdvance(glyph, mSpaceLength, kerning);
                     lastChar = thisChar;
                     continue;
                 }
@@ -2224,7 +2272,7 @@ namespace Gorilla
                 {
                     if (mClippedRightIndex == std::string::npos)
                         mClippedRightIndex = i;
-                    cursorX  += _getAdvance(glyph, kerning);
+                    cursorX  += _getAdvance(glyph, mSpaceLength, kerning);
                     lastChar = thisChar;
                     continue;
                 }
@@ -2232,23 +2280,33 @@ namespace Gorilla
 
             if(fixedWidth())
             {
-                Ogre::Real offset = std::floor((mGlyphData->mMonoWidth - glyph->glyphWidth) / 2.0f);
+                //Ogre::Real offset = std::floor((mGlyphData->mMonoWidth - glyph->glyphWidth) / 2.0f);
+                Ogre::Real offset = std::floor((mSpaceLength - glyph->advance) / 2.0f);
                 left += offset;
                 right += offset;
             }
 
+            //// Triangle A
+            //PUSH_VERTEX(mVertices, temp, left, bottom, glyph->texCoords[BottomLeft], mColour);  // Left/Bottom  3
+            //PUSH_VERTEX(mVertices, temp, right, top, glyph->texCoords[TopRight], mColour);    // Right/Top    1
+            //PUSH_VERTEX(mVertices, temp, left, top, glyph->texCoords[TopLeft], mColour);     // Left/Top     0
+
+            //// Triangle B
+            //PUSH_VERTEX(mVertices, temp, left, bottom, glyph->texCoords[BottomLeft], mColour);  // Left/Bottom  3
+            //PUSH_VERTEX(mVertices, temp, right, bottom, glyph->texCoords[BottomRight], mColour); // Right/Bottom 2
+            //PUSH_VERTEX(mVertices, temp, right, top, glyph->texCoords[TopRight], mColour);    // Right/Top    1
+
             // Triangle A
-            PUSH_VERTEX(mVertices, temp, left, bottom, glyph->texCoords[BottomLeft], mColour);  // Left/Bottom  3
-            PUSH_VERTEX(mVertices, temp, right, top, glyph->texCoords[TopRight], mColour);    // Right/Top    1
-            PUSH_VERTEX(mVertices, temp, left, top, glyph->texCoords[TopLeft], mColour);     // Left/Top     0
+            PUSH_VERTEX2(mVertices, temp, left, bottom, glyph->uvRect.left, glyph->uvRect.bottom, mColour);  // Left/Bottom  3
+            PUSH_VERTEX2(mVertices, temp, right, top, glyph->uvRect.right, glyph->uvRect.top, mColour);    // Right/Top    1
+            PUSH_VERTEX2(mVertices, temp, left, top, glyph->uvRect.left, glyph->uvRect.top, mColour);     // Left/Top     0
 
             // Triangle B
-            PUSH_VERTEX(mVertices, temp, left, bottom, glyph->texCoords[BottomLeft], mColour);  // Left/Bottom  3
-            PUSH_VERTEX(mVertices, temp, right, bottom, glyph->texCoords[BottomRight], mColour); // Right/Bottom 2
-            PUSH_VERTEX(mVertices, temp, right, top, glyph->texCoords[TopRight], mColour);    // Right/Top    1
+            PUSH_VERTEX2(mVertices, temp, left, bottom, glyph->uvRect.left, glyph->uvRect.bottom, mColour);  // Left/Bottom  3
+            PUSH_VERTEX2(mVertices, temp, right, bottom, glyph->uvRect.right, glyph->uvRect.bottom, mColour); // Right/Bottom 2
+            PUSH_VERTEX2(mVertices, temp, right, top, glyph->uvRect.right, glyph->uvRect.top, mColour);    // Right/Top    1
 
-
-            cursorX  += _getAdvance(glyph, kerning);
+            cursorX  += _getAdvance(glyph, mSpaceLength, kerning);
             lastChar = thisChar;
 
         } // for
@@ -2258,12 +2316,12 @@ namespace Gorilla
     }
 
 
-    Ogre::Real Caption::_getAdvance(Glyph* glyph, Ogre::Real kerning)
+    Ogre::Real Caption::_getAdvance(const Font::GlyphInfo *glyph, Ogre::Real pixelWidth, Ogre::Real kerning)
     {
         if(mFixedWidth)
-            return mGlyphData->mMonoWidth;
+            return pixelWidth;
         else
-            return glyph->glyphAdvance + kerning;
+            return glyph->advance + kerning;
     }
 
 

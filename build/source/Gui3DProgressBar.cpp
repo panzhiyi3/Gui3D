@@ -42,7 +42,8 @@ ProgressBar::ProgressBar(Ogre::Real x,
                          Container* parentContainer)
                          : PanelElementCallback(parentContainer)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->progressbarTextSize, x, y, "");
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->progressbarTextSize, x, y, "");
+    mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, L"");
     mCaption->align(Gorilla::TextAlign_Centre);
     mCaption->vertical_align(Gorilla::VerticalAlign_Middle);
     mCaption->background(getColors()->transparent);
@@ -186,8 +187,8 @@ Ogre::Vector2 ProgressBar::getPosition()
 
 void ProgressBar::_actualize()
 {
-    ostringstream s;
-    s << fixed << setprecision(0) << (mValue * 100) << "%";
+    wostringstream s;
+    s << fixed << setprecision(0) << (mValue * 100) << L"%";
     mCaption->text(s.str());
 }
 

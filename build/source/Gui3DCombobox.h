@@ -55,7 +55,7 @@ public:
              Ogre::Real y,
              size_t width,
              size_t height,
-             const std::vector<Ogre::String>& items,
+             const std::vector<std::wstring>& items,
              unsigned int nbDisplayedElements,
              Container* parentContainer);
     
@@ -76,12 +76,12 @@ public:
 
     /** \brief Return the value of the combobox
     */
-    Ogre::String getValue();
+    std::wstring getValue();
 
     /** \brief Set the current value of this combobox. If the element 
     isn't found, nothing is changed.
     */
-    void setCurrentValue(Ogre::String& itemName);
+    void setCurrentValue(std::wstring& itemName);
 
     void highlight();
     

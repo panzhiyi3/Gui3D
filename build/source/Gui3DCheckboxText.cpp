@@ -33,12 +33,13 @@ CheckboxText::CheckboxText(Ogre::Real x,
                            Ogre::Real y,
                            size_t width,
                            size_t height, 
-                           char checkedSymbol,
+                           wchar_t checkedSymbol,
                            Container* parentContainer)
                            : Checkbox(x, y, width, height, parentContainer), 
                              mCheckedSymbol(checkedSymbol)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->checkboxTextSize, x, y, "");
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->checkboxTextSize, x, y, "");
+    mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, L"");
     mCaption->size(width, height);
     mCaption->align(Gorilla::TextAlign_Centre);
     mCaption->vertical_align(Gorilla::VerticalAlign_Middle);
@@ -75,7 +76,7 @@ void CheckboxText::setPosition(int left, int top)
 void CheckboxText::_checkUnOver()
 {
     _unOver();
-    Ogre::String s;
+    std::wstring s;
     s += mCheckedSymbol;
     mCaption->text(s);
 }
@@ -84,7 +85,7 @@ void CheckboxText::_checkUnOver()
 void CheckboxText::_checkOver()
 {
     _over();
-    Ogre::String s;
+    std::wstring s;
     s += mCheckedSymbol;
     mCaption->text(s);
 }
@@ -92,7 +93,7 @@ void CheckboxText::_checkOver()
 
 void CheckboxText::_unOver()
 {
-    mCaption->text("");
+    mCaption->text(L"");
 
     if (mChecked)
     {
@@ -113,7 +114,7 @@ void CheckboxText::_unOver()
 
 void CheckboxText::_over()
 {
-    mCaption->text("");
+    mCaption->text(L"");
 
     if (mChecked)
     {

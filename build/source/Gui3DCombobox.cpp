@@ -35,7 +35,7 @@ Combobox::Combobox(Ogre::Real x,
                    Ogre::Real y,
                    size_t width,
                    size_t height,
-                   const vector<Ogre::String>& items,
+                   const vector<std::wstring>& items,
                    unsigned int nbDisplayedElements,
                    Container* parentContainer)
                    : VerticalSelector(x, y, width, height, items, nbDisplayedElements, parentContainer), 
@@ -134,7 +134,7 @@ bool Combobox::isOver(const Ogre::Vector2& pos)
 }
 
 
-void Combobox::setCurrentValue(Ogre::String& itemName)
+void Combobox::setCurrentValue(std::wstring& itemName)
 {
     for (size_t i=0; i < mCaptions.size(); i++)
     {
@@ -148,7 +148,7 @@ void Combobox::setCurrentValue(Ogre::String& itemName)
 }
 
 
-Ogre::String Combobox::getValue()
+std::wstring Combobox::getValue()
 {
     return mValues[mActualSelectedElement];
 }

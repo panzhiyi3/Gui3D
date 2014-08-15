@@ -48,7 +48,7 @@ public:
            Ogre::Real y, 
            size_t width,
            size_t height,
-           const Ogre::String& text,
+           const std::wstring& text,
            Container* parentContainer);
 
     ~Button();
@@ -71,7 +71,7 @@ public:
     
     void setSize(int width, int height);
 
-    void setText(const Ogre::String& text);
+    void setText(const std::wstring& text);
     
     void injectTimeAndMousePosition(double time, const Ogre::Vector2& pos);
     

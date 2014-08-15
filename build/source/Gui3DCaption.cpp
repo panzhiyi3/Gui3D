@@ -35,13 +35,14 @@ Caption::Caption(Ogre::Real x,
                  Ogre::Real y,
                  size_t width,
                  size_t height,
-                 const Ogre::String& text,
+                 const std::wstring& text,
                  Container* parentContainer,
                  Gorilla::TextAlignment textAlign,
                  Gorilla::VerticalAlignment verticalAlign)
                  : PanelElement(parentContainer)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->captionTextSize, x, y, text);
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->captionTextSize, x, y, text);
+    mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, text);
     mCaption->size(width, height);
     mCaption->align(textAlign);
     mCaption->vertical_align(verticalAlign);
@@ -132,13 +133,13 @@ void Caption::highlight()
 }
 
 
-void Caption::text(Ogre::String s)
+void Caption::text(const std::wstring &s)
 {
     mCaption->text(s);
 }
 
 
-Ogre::String Caption::text()
+std::wstring Caption::text()
 {
     return mCaption->text();
 }

@@ -192,14 +192,14 @@ public:
 
     /** \brief Set the text of this caption
     */
-    void text(const Ogre::String& text)
+    void text(const std::wstring& text)
     {
         mCaption->text(text);
     }
 
     /** \brief Get the text of this caption
     */
-    Ogre::String text()
+    std::wstring text()
     {
         return mCaption->text();
     }

@@ -1,0 +1,7 @@
+*.obj
+*.lib
+*.exe
+*.idb
+*.suo
+*.ncb
+*.pdb

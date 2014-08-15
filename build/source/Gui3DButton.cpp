@@ -35,12 +35,13 @@ Button::Button(Ogre::Real x,
                Ogre::Real y,
                size_t width,
                size_t height,
-               const Ogre::String& text,
+               const std::wstring& text,
                Container* parentContainer)
                : PanelElementCallback(parentContainer), 
                  mIsActive(true), mIsClicked(false)
 {
-    mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->buttonTextSize, x, y, text);
+    //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->buttonTextSize, x, y, text);
+    mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, text);
     mCaption->align(Gorilla::TextAlign_Centre);
     mCaption->vertical_align(Gorilla::VerticalAlign_Middle);
     mCaption->background(getColors()->transparent);
@@ -137,7 +138,7 @@ void Button::setSize(int width, int height)
 }
 
 
-void Button::setText(const Ogre::String& text)
+void Button::setText(const std::wstring& text)
 {
     mCaption->text(text);
 }

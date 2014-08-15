@@ -49,7 +49,7 @@ public:
                      Ogre::Real y,
                      size_t width,
                      size_t height,
-                     const std::vector<Ogre::String>& items,
+                     const std::vector<std::wstring>& items,
                      unsigned int nbDisplayedElements,
                      Container* parentContainer);
     

@@ -46,7 +46,7 @@ public:
             Ogre::Real y,
             size_t width,
             size_t height,
-            const std::vector<Ogre::String>& items,
+            const std::vector<std::wstring>& items,
             unsigned int nbDisplayedElements,
             Container* parentContainer);
     
@@ -65,11 +65,11 @@ public:
 
     bool isOver(const Ogre::Vector2& pos);
 
-    void setCurrentValue(Ogre::String& itemName);
+    void setCurrentValue(std::wstring& itemName);
 
-    void setCurrentValues(std::vector<Ogre::String>& itemsName);
+    void setCurrentValues(std::vector<std::wstring>& itemsName);
 
-    std::vector<Ogre::String> getValues();
+    std::vector<std::wstring> getValues();
 
     void setFocus(bool hasFocus);
 

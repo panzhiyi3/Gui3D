@@ -32,12 +32,12 @@ namespace Gui3D
 using namespace std;
 
 StringCursorEdit::StringCursorEdit() 
-    : mStr(""), mCursorPosition(0), mCursor('|'), mMaxLength(-1)
+    : mStr(L""), mCursorPosition(0), mCursor(L'|'), mMaxLength(-1)
 {
 }
 
 
-StringCursorEdit::StringCursorEdit(string s, char separator) 
+StringCursorEdit::StringCursorEdit(std::wstring s, wchar_t separator) 
     : mStr(s), mCursorPosition(s.size()), mCursor(separator), mMaxLength(-1)
 {
 }
@@ -48,15 +48,15 @@ StringCursorEdit::~StringCursorEdit(void)
 }
 
 
-string StringCursorEdit::getStringWithoutCursor()
+std::wstring StringCursorEdit::getStringWithoutCursor()
 {
     return mStr;
 }
 
 
-string StringCursorEdit::getStringWithCursor()
+std::wstring StringCursorEdit::getStringWithCursor()
 {
-    string strToReturn;
+    std::wstring strToReturn;
     strToReturn = mStr.substr(0, mCursorPosition);
     strToReturn += mCursor;
     strToReturn.append(mStr.substr(mCursorPosition, mStr.size()));
@@ -64,7 +64,7 @@ string StringCursorEdit::getStringWithCursor()
 }
 
 
-void StringCursorEdit::injectKey(char key)
+void StringCursorEdit::injectKey(wchar_t key)
 {
     // Don't inject anything if the max length is reached
     if (mMaxLength != -1 && 
@@ -81,7 +81,7 @@ void StringCursorEdit::injectKey(char key)
         (97 <= asciiKey && asciiKey <= 122) || // a-z
         asciiKey == 32) // [space]
         {
-            string newStr;
+            std::wstring newStr;
             newStr = mStr.substr(0, mCursorPosition);
             newStr.append(&key, 1);
             newStr.append(mStr.substr(mCursorPosition, mStr.size()));
@@ -100,26 +100,22 @@ void StringCursorEdit::cursorRight()
         mCursorPosition++;
 }
 
-
 void StringCursorEdit::cursorLeft()
 {
     if (mCursorPosition > 0)
         mCursorPosition--;
 }
 
-
-void StringCursorEdit::setText(const string text)
+void StringCursorEdit::setText(const std::wstring &text)
 {
     mStr = text;
     mCursorPosition = mStr.size();
 }
 
-
-void StringCursorEdit::setCursor(char cursor)
+void StringCursorEdit::setCursor(wchar_t cursor)
 {
     mCursor = cursor;
 }
-
 
 void StringCursorEdit::backspace()
 {
@@ -127,7 +123,7 @@ void StringCursorEdit::backspace()
     if (mCursorPosition == 0)
         return;
 
-    string newStr;
+    std::wstring newStr;
     // Remove the letter before the mCursorPosition
     newStr = mStr.substr(0, mCursorPosition - 1);
     newStr.append(mStr.substr(mCursorPosition, mStr.size()));
@@ -143,7 +139,7 @@ void StringCursorEdit::deleteLetter()
     if (mCursorPosition == mStr.size())
         return;
 
-    string newStr;
+    std::wstring newStr;
     // Remove the letter after the mCursorPosition
     newStr = mStr.substr(0, mCursorPosition);
     newStr.append(mStr.substr(mCursorPosition + 1, mStr.size()));

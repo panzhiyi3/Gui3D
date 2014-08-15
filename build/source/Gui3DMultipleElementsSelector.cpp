@@ -34,15 +34,15 @@ MultipleElementsSelector::MultipleElementsSelector(Ogre::Real x,
                                                    Ogre::Real y,
                                                    size_t width,
                                                    size_t height,
-                                                   const std::vector<Ogre::String>& items,
+                                                   const std::vector<std::wstring>& items,
                                                    Container* parentContainer)
                                                    : PanelElementCallback(parentContainer), 
                                                       mActualOveredElement(MULTIPLE_ELEMENT_SELECTOR_NO_ELEMENT)
 {
     mDesign = mParentContainer->getGUILayer()->createRectangle(x, y, width, height);
 
-    mPreviousElementsButton = new Button(0, 0, 30, 30, "", mParentContainer);
-    mNextElementsButton = new Button(0, 0, 30, 30, "", mParentContainer);
+    mPreviousElementsButton = new Button(0, 0, 30, 30, L"", mParentContainer);
+    mNextElementsButton = new Button(0, 0, 30, 30, L"", mParentContainer);
 
     for (size_t i = 0; i < items.size(); i++)
         addItem(items[i]);
@@ -109,7 +109,7 @@ bool MultipleElementsSelector::isOver(const Ogre::Vector2& pos)
 }
 
 
-void MultipleElementsSelector::addItem(Ogre::String itemName)
+void MultipleElementsSelector::addItem(std::wstring itemName)
 {
     mValues.push_back(itemName);
 }
@@ -149,8 +149,8 @@ void MultipleElementsSelector::setBackgroundImageButtons(const Ogre::String& pre
         nextButtonInactiveSpriteName.length() == 0      || nextButtonInactiveSpriteName == "none"       ||
         nextButtonClickedSpriteName.length() == 0       || nextButtonClickedSpriteName == "none")
     {
-        mPreviousElementsButton->setText("<");
-        mNextElementsButton->setText(">");
+        mPreviousElementsButton->setText(L"<");
+        mNextElementsButton->setText(L">");
     }
     else
     {
@@ -158,13 +158,13 @@ void MultipleElementsSelector::setBackgroundImageButtons(const Ogre::String& pre
                                                     previousButtonNotOveredSpriteName, 
                                                     previousButtonInactiveSpriteName,
                                                     previousButtonClickedSpriteName);
-        mPreviousElementsButton->setText("");
+        mPreviousElementsButton->setText(L"");
 
         mNextElementsButton->setBackgroundImage(nextButtonOveredSpriteName, 
                                                 nextButtonNotOveredSpriteName, 
                                                 nextButtonInactiveSpriteName,
                                                 nextButtonClickedSpriteName);
-        mNextElementsButton->setText("");
+        mNextElementsButton->setText(L"");
     }
 }
 

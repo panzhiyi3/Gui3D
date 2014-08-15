@@ -1,5 +1,6 @@
 #include "Ogre.h"
 #include "FreeTypeFont.h"
+#include "FontManager.h"
 #include "OgreTextureManager.h"
 
 using namespace Ogre;
@@ -8,29 +9,18 @@ namespace Gorilla
 {
     const Ogre::String FONT_TEXTURE_BASENAME = "GUI3D_FreeTypeFontTexture";
 
-    Font::Font(int textureSize, float ttfSize, int ttfResolution)
-        :mTtfMaxBearingY(0)
-        ,mTtfResolution(0)
-        ,mAntialiasColour(false)
-        ,mLeftBlankNum(0)
-        ,mImageData(NULL)
-        ,mImage_m(0)
-        ,mImage_l(0)
+    FreeTypeFont::FreeTypeFont(int textureSize, int ttfSize, int ttfResolution, bool antiAliased)
+        : Font(textureSize, ttfSize, ttfResolution, antiAliased)
     {
-        mWidth = textureSize;
-        mHeight = textureSize;
-        mTtfSize = ttfSize;
-        mTtfResolution = ttfResolution;
-
         mTextureName = FONT_TEXTURE_BASENAME;
     }
 
-    Font::~Font()
+    FreeTypeFont::~FreeTypeFont()
     {
-        unLoad();
+        //Font class will call unLoad()
     }
 
-    void Font::load(const std::string &name, const std::string &fontName)
+    void FreeTypeFont::load(const std::string &name, const std::string &fontName)
     {
         mFontPath = name;
         mTextureName += fontName;
@@ -68,13 +58,13 @@ namespace Gorilla
         }
 
         // Calculate maximum width, height and bearing
-        for (CodePointRangeList::const_iterator r = mCodePointRangeList.begin();
+        for (Font::CodePointRangeList::const_iterator r = mCodePointRangeList.begin();
             r != mCodePointRangeList.end(); ++r)
         {
-            const CodePointRange& range = *r;
-            for(CodePoint cp = range.first; cp <= range.second; ++cp)
+            const Font::CodePointRange& range = *r;
+            for(Font::CodePoint cp = range.first; cp <= range.second; ++cp)
             {
-                FT_Load_Char( mFtFace, cp, FT_LOAD_RENDER );
+                FT_Load_Char( mFtFace, cp, FT_LOAD_RENDER);
 
                 if( ( 2 * ( mFtFace->glyph->bitmap.rows << 6 ) - mFtFace->glyph->metrics.horiBearingY ) > mMaxHeight )
                     mMaxHeight = ( 2 * ( mFtFace->glyph->bitmap.rows << 6 ) - mFtFace->glyph->metrics.horiBearingY );
@@ -108,7 +98,7 @@ namespace Gorilla
         }
     }
 
-    void Font::unLoad()
+    void FreeTypeFont::unLoad()
     {
         if(mImageData)
         {
@@ -118,7 +108,105 @@ namespace Gorilla
         FT_Done_FreeType(mFtLibrary);
     }
 
-    const Font::GlyphInfo *Font::getGlyphInfo(CodePoint id) const
+    void FreeTypeFont::addCodePointRange(const FreeTypeFont::CodePointRange &range)
+    {
+        mCodePointRangeList.push_back(range);
+    }
+
+    void FreeTypeFont::clearCodePointRanges()
+    {
+        mCodePointRangeList.clear();
+    }
+
+    const Font::CodePointRangeList &FreeTypeFont::getCodePointRangeList() const
+    {
+        return mCodePointRangeList;
+    }
+
+    const Font::UVRect &FreeTypeFont::getGlyphTexCoords(Font::CodePoint id) const
+    {
+        Font::CodePointMap::const_iterator i = mCodePointMap.find(id);
+        if (i != mCodePointMap.end())
+        {
+            return i->second.uvRect;
+        }
+        else
+        {
+            static Font::UVRect nullRect(0.0, 0.0, 0.0, 0.0);
+            return nullRect;
+        }
+    }
+
+    //void FreeTypeFont::setGlyphTexCoords(Font::CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel, unsigned int u2Pixel, unsigned int v2Pixel, float textureAspect)
+    //{
+    //    float u1 = (float)u1Pixel / (float)mWidth, v1 = (float)v1Pixel / (float)mHeight, u2 = (float)u2Pixel / (float)mWidth, v2 = (float)v2Pixel / (float)mWidth;
+    //    Font::CodePointMap::iterator i = mCodePointMap.find(id);
+    //    if (i != mCodePointMap.end())
+    //    {
+    //        i->second.uvRect.left = u1;
+    //        i->second.uvRect.top = v1;
+    //        i->second.uvRect.right = u2;
+    //        i->second.uvRect.bottom = v2;
+    //        i->second.aspectRatio = textureAspect * (u2 - u1)  / (v2 - v1);
+    //        i->second.u = u1Pixel;
+    //        i->second.v = v1Pixel;
+    //    }
+    //    else
+    //    {
+    //        mCodePointMap.insert(
+    //            Font::CodePointMap::value_type(id, 
+    //            Font::GlyphInfo(id, Font::UVRect(u1, v1, u2, v2), 
+    //            textureAspect * (u2 - u1)  / (v2 - v1), u1Pixel, v1Pixel)));
+    //    }
+    //}
+
+    inline float FreeTypeFont::getGlyphAspectRatio(CodePoint id) const
+    {
+        CodePointMap::const_iterator i = mCodePointMap.find(id);
+        if (i != mCodePointMap.end())
+        {
+            return i->second.aspectRatio;
+        }
+        else
+        {
+            return 1.0;
+        }
+    }
+
+    inline void FreeTypeFont::setGlyphAspectRatio(CodePoint id, float ratio)
+    {
+        CodePointMap::iterator i = mCodePointMap.find(id);
+        if (i != mCodePointMap.end())
+        {
+            i->second.aspectRatio = ratio;
+        }
+    }
+
+    void FreeTypeFont::setGlyphInfo(CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel, unsigned int u2Pixel, unsigned int v2Pixel, unsigned int advance, float textureAspect)
+    {
+        float u1 = (float)u1Pixel / (float)mWidth, v1 = (float)v1Pixel / (float)mHeight, u2 = (float)u2Pixel / (float)mWidth, v2 = (float)v2Pixel / (float)mWidth;
+        Font::CodePointMap::iterator i = mCodePointMap.find(id);
+        if (i != mCodePointMap.end())
+        {
+            i->second.uvRect.left = u1;
+            i->second.uvRect.top = v1;
+            i->second.uvRect.right = u2;
+            i->second.uvRect.bottom = v2;
+            i->second.aspectRatio = textureAspect * (u2 - u1)  / (v2 - v1);
+            i->second.u1Pixel = u1Pixel;
+            i->second.v1Pixel = v1Pixel;
+            i->second.advance = advance;
+        }
+        else
+        {
+            mCodePointMap.insert(
+                Font::CodePointMap::value_type(id, 
+                Font::GlyphInfo(id, Font::UVRect(u1, v1, u2, v2), 
+                textureAspect * (u2 - u1)  / (v2 - v1), u1Pixel, v1Pixel, advance)));
+        }
+    }
+
+    const FreeTypeFont::GlyphInfo *FreeTypeFont::getGlyphInfo(CodePoint id) const
     {
         CodePointMap::const_iterator i = mCodePointMap.find(id);
         if (i == mCodePointMap.end())
@@ -128,7 +216,7 @@ namespace Gorilla
         return &i->second;
     }
 
-    void Font::renderGlyphIntoTexture(CodePoint id)
+    void FreeTypeFont::renderGlyphIntoTexture(CodePoint id)
     {
         FT_Error ftResult;
 
@@ -141,6 +229,7 @@ namespace Gorilla
         }
 
         FT_Int advance = mFtFace->glyph->advance.x >> 6;
+        //FT_Int advance = mFtFace->glyph->metrics.horiAdvance >> 6;
         unsigned char* buffer = mFtFace->glyph->bitmap.buffer;
 
         if (!buffer)
@@ -154,8 +243,8 @@ namespace Gorilla
 
         for(int j = 0; j < mFtFace->glyph->bitmap.rows; ++j )
         {
-            size_t row = j + mImage_m + y_bearnig;
-            UCHAR *pDest = &mImageData[(row * mWidth * mPixelBytes) + (mImage_l + x_bearing) * mPixelBytes];
+            size_t row = j + mImage_v + y_bearnig;
+            UCHAR *pDest = &mImageData[(row * mWidth * mPixelBytes) + (mImage_u + x_bearing) * mPixelBytes];
             for(int k = 0; k < mFtFace->glyph->bitmap.width; ++k )
             {
                 if (mAntialiasColour)
@@ -178,44 +267,57 @@ namespace Gorilla
             }
         }
 
-        this->setGlyphTexCoords(id,
-            mImage_l,  // u1
-            mImage_m,  // v1
-            mImage_l + ( mFtFace->glyph->advance.x >> 6 ), // u2
-            mImage_m + ( mMaxHeight >> 6 ), // v2
+        this->setGlyphInfo(id,
+            mImage_u,  // u1
+            mImage_v,  // v1
+            mImage_u + ( mFtFace->glyph->advance.x >> 6 ), // u2
+            mImage_v + ( mMaxHeight >> 6 ), // v2
+            //advance,
+            20,
             mTextureAspect
             );
 
         // Advance a column
-        mImage_l += (advance + mCharSpacer);
+        mImage_u += (advance + mCharSpacer);
 
         // If at end of row
-        if( mWidth - 1 < mImage_l + ( advance ) )
+        if( mWidth - 1 < mImage_u + ( advance ) )
         {
-            mImage_m += ( mMaxHeight >> 6 ) + mCharSpacer;
-            mImage_l = 0;
+            mImage_v += ( mMaxHeight >> 6 ) + mCharSpacer;
+            mImage_u = 0;
         }
         --mLeftBlankNum;
 
-        Ogre::MemoryDataStream *dateStream = new Ogre::MemoryDataStream(mImageData, mWidth * mHeight * mPixelBytes);
+        DataStreamPtr dataSream(new Ogre::MemoryDataStream(mImageData, mWidth * mHeight * mPixelBytes));
 
+        TextureManager::getSingleton().remove(mTextureName);
         TexturePtr tex = TextureManager::getSingleton().loadRawData(
             mTextureName,
             Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            Ogre::DataStreamPtr(dateStream),
+            dataSream,
             mWidth,
             mHeight,
             Ogre::PF_A8R8G8B8,
             Ogre::TEX_TYPE_2D,
             0);
 
+        //static int g_count=0;
+        //if(g_count==3)
+        //{
+        //    g_count=0;
+        //    Image img;
+        //    tex->convertToImage(img);
+        //    img.save("H:\\test.png");
+        //}
+        //g_count++;
+
         //Image img;
         //tex->convertToImage(img);
-        //img.save("F:\\test.png");
+        //img.save("H:\\test.png");
 
 /*
         D3DLOCKED_RECT lockedRect;
-        mTexture->LockRect(0, &lockedRect,0, 0);         
+        mTexture->LockRect(0, &lockedRect,0, 0);
 
         //使用类型注意
         uchar* TexData = (uchar*)lockedRect.pBits;
@@ -238,35 +340,41 @@ namespace Gorilla
         //#endif
     }
 
-    void Font::insertGlyphInfo(CodePoint id)
+    void FreeTypeFont::insertGlyphInfo(CodePoint id)
     {
-        if(!hasBlankInTexture())    //has no space left in texture    
+        if(!hasBlankInTexture()) // has no space left in texture    
         {
             removeGlyph(getLessUseChar());
         }
         renderGlyphIntoTexture(id);
-
     }
 
-    Font::CodePoint Font::getLessUseChar()
+    bool FreeTypeFont::hasBlankInTexture() const 
+    { 
+        return mLeftBlankNum > 0; 
+    }
+
+    Font::CodePoint FreeTypeFont::getLessUseChar()
     {
-        CodePointMap::iterator i = mCodePointMap.begin(), iend = mCodePointMap.end(), iless = mCodePointMap.begin();
-        while(i != iend)
+        CodePointMap::iterator itr = mCodePointMap.begin();
+        CodePointMap::iterator itrEnd = mCodePointMap.end();
+        CodePointMap::iterator itrLess = mCodePointMap.begin();
+        while(itr != itrEnd)
         {
-            if(i->second.useCount < iless->second.useCount)
-                iless = i;
-            ++i;
+            if(itr->second.useCount < itrLess->second.useCount)
+                itrLess = itr;
+            itr++;
         }
-        return iless->second.codePoint;   
+        return itrLess->second.codePoint;   
     }
 
-    void Font::removeGlyph(CodePoint id)
+    void FreeTypeFont::removeGlyph(CodePoint id)
     {
         CodePointMap::iterator it = mCodePointMap.find(id);
         if(it != mCodePointMap.end())
         {
-            mImage_l = it->second.l;
-            mImage_m = it->second.m;
+            mImage_u = it->second.u1Pixel;
+            mImage_v = it->second.v1Pixel;
             mCodePointMap.erase(it);
             ++mLeftBlankNum;
         }
