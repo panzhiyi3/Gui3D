@@ -44,7 +44,7 @@ Combobox::Combobox(Ogre::Real x,
     mDesign->background_gradient(getColors()->comboboxBackgroundGradientType,
                                  getColors()->comboboxBackgroundGradientStart,
                                  getColors()->comboboxBackgroundGradientEnd);
-    mDesign->border(getColors()->comboboxBorderSize,
+    mDesign->border((Ogre::Real) getColors()->comboboxBorderSize,
                     getColors()->comboboxBorder);
 
     for (size_t i=0; i < mMaxNumberOfVisibleElements; i++)

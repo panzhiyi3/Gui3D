@@ -84,16 +84,16 @@ void VerticalSelector::setSize(int width, int height)
     mDesign->width(width);
     mDesign->height(height);
 
-    int x = mDesign->left();
-    int y = mDesign->top();
+    int x = (int) mDesign->left();
+    int y = (int) mDesign->top();
 
-    int decalXButtons = x + 
+    int decalXButtons = (int) ((float) x + 
                         width * (VERTICAL_SELECTOR_MARGIN_LEFT + 
                                  VERTICAL_SELECTOR_MARGIN_CAPTIONS_BUTTONS + 
-                                 VERTICAL_SELECTOR_CAPTION_X_SIZE);
-    int decalYButtonPreviousElements = y + height * VERTICAL_SELECTOR_MARGIN_TOP;
-    int decalYButtonNextElements     = y + height * (1 - VERTICAL_SELECTOR_MARGIN_BOTTOM);
-    int sizeXYElementButton          =     width * VERTICAL_SELECTOR_BUTTON_SIZE;
+                                 VERTICAL_SELECTOR_CAPTION_X_SIZE));
+    int decalYButtonPreviousElements = (int) ((float) y + height * VERTICAL_SELECTOR_MARGIN_TOP);
+    int decalYButtonNextElements     = (int) ((float) y + height * (1 - VERTICAL_SELECTOR_MARGIN_BOTTOM));
+    int sizeXYElementButton          = (int) ((float) width * VERTICAL_SELECTOR_BUTTON_SIZE);
     
     mPreviousElementsButton->setPosition(decalXButtons, decalYButtonPreviousElements);
     mPreviousElementsButton->setSize(sizeXYElementButton, sizeXYElementButton);
@@ -101,16 +101,16 @@ void VerticalSelector::setSize(int width, int height)
     mNextElementsButton->setPosition(decalXButtons, decalYButtonNextElements - sizeXYElementButton);
     mNextElementsButton->setSize(sizeXYElementButton, sizeXYElementButton);
 
-    int captionsXPosition   = x + width * VERTICAL_SELECTOR_MARGIN_LEFT;
-    int captionsXSize       =     width * VERTICAL_SELECTOR_CAPTION_X_SIZE;
+    int captionsXPosition   = (int) ((float) x + width * VERTICAL_SELECTOR_MARGIN_LEFT);
+    int captionsXSize       = (int) ((float) width * VERTICAL_SELECTOR_CAPTION_X_SIZE);
 
     //int captionsYSize = height * VERTICAL_SELECTOR_CAPTION_Y_SIZE;
-    int captionsYSize = height * (1 - (VERTICAL_SELECTOR_MARGIN_TOP + 
-                                       (mMaxNumberOfVisibleElements - 1) * VERTICAL_SELECTOR_CAPTION_HEIGHT_SPACING)) / 
-                                 mMaxNumberOfVisibleElements;
+    int captionsYSize = (int) ((float) height * (1 - (VERTICAL_SELECTOR_MARGIN_TOP + 
+                                 (mMaxNumberOfVisibleElements - 1) * VERTICAL_SELECTOR_CAPTION_HEIGHT_SPACING)) / 
+                                 mMaxNumberOfVisibleElements);
 
-    int captionsYPadding        =     height * VERTICAL_SELECTOR_CAPTION_HEIGHT_SPACING;
-    int captionsYStartPosition  = y + height * VERTICAL_SELECTOR_MARGIN_TOP;
+    int captionsYPadding        = (int) ((float) height * VERTICAL_SELECTOR_CAPTION_HEIGHT_SPACING);
+    int captionsYStartPosition  = (int) ((float) y + height * VERTICAL_SELECTOR_MARGIN_TOP);
 
     for (size_t i=0; i < mMaxNumberOfVisibleElements; i++)
     {

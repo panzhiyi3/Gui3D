@@ -35,9 +35,11 @@ namespace Gorilla
 
         virtual inline void setGlyphAspectRatio(CodePoint id, float ratio);
 
-        virtual inline void setGlyphInfo(CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel, unsigned int u2Pixel, unsigned int v2Pixel, unsigned int advance, float textureAspect);
+        virtual inline void setGlyphInfo(CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel,
+            unsigned int u2Pixel, unsigned int v2Pixel,
+            unsigned int advanceX, unsigned int advanceY, float textureAspect);
 
-        virtual const GlyphInfo *getGlyphInfo(CodePoint id) const;
+        virtual const GlyphInfo *getGlyphInfo(CodePoint id);
 
         virtual void insertGlyphInfo(CodePoint id);
 

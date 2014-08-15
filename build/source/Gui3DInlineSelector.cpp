@@ -29,9 +29,9 @@
 namespace Gui3D
 {
 
-static float INLINE_SELECTOR_BUTTON_CAPTION_SPACING = 0.02;
-static float INLINE_SELECTOR_CAPTION_X_SIZE         = 0.8;
-static float INLINE_SELECTOR_BUTTON_Y_SIZE          = 0.8;
+static float INLINE_SELECTOR_BUTTON_CAPTION_SPACING = 0.02f;
+static float INLINE_SELECTOR_CAPTION_X_SIZE         = 0.8f;
+static float INLINE_SELECTOR_BUTTON_Y_SIZE          = 0.8f;
 
 using namespace std;
 
@@ -54,7 +54,7 @@ InlineSelector::InlineSelector(Ogre::Real x,
     mDesign->background_gradient(getColors()->inlineselectorBackgroundGradientType,
                                  getColors()->inlineselectorBackgroundGradientStart,
                                  getColors()->inlineselectorBackgroundGradientEnd);
-    mDesign->border(getColors()->inlineselectorBorderSize,
+    mDesign->border((Ogre::Real) getColors()->inlineselectorBorderSize,
                     getColors()->inlineselectorBorder);
 
     mPreviousElementsButton->text(L"<");
@@ -78,20 +78,20 @@ void InlineSelector::setSize(int width, int height)
     mDesign->width(width);
     mDesign->height(height);
 
-    int x = mDesign->left();
-    int y = mDesign->top();
+    int x = (int) mDesign->left();
+    int y = (int) mDesign->top();
 
-    int sizeXButtons = width * (1 - INLINE_SELECTOR_CAPTION_X_SIZE 
-                                - 2 * INLINE_SELECTOR_BUTTON_CAPTION_SPACING) / 2;
+    int sizeXButtons = (int) ((float) width * (1 - INLINE_SELECTOR_CAPTION_X_SIZE 
+                                - 2 * INLINE_SELECTOR_BUTTON_CAPTION_SPACING) / 2);
     int sizeYButtons                    =     height * INLINE_SELECTOR_BUTTON_Y_SIZE;
     int decalXButtonPreviousElements    = x;
-    int decalYButtonPreviousElements    = y + height * ((1 - INLINE_SELECTOR_BUTTON_Y_SIZE) / 2);
-    int decalXButtonNextElements        = x + width - sizeXButtons;
+    int decalYButtonPreviousElements    = (int) ((float) y + height * ((1 - INLINE_SELECTOR_BUTTON_Y_SIZE) / 2));
+    int decalXButtonNextElements        = (int) ((float) x + width - sizeXButtons);
     int decalYButtonNextElements        = decalYButtonPreviousElements;
 
-    int sizeXCaption =      width * INLINE_SELECTOR_CAPTION_X_SIZE;
-    int sizeYCaption =      height;
-    int decalXCaption = x + width - (sizeXCaption + sizeXButtons + INLINE_SELECTOR_BUTTON_CAPTION_SPACING * width);
+    int sizeXCaption = (int) ((float) width * INLINE_SELECTOR_CAPTION_X_SIZE);
+    int sizeYCaption = height;
+    int decalXCaption = (int) ((float) x + width - (sizeXCaption + sizeXButtons + INLINE_SELECTOR_BUTTON_CAPTION_SPACING * width));
     int decalYCaption = y;
 
     mCaption->left(decalXCaption);

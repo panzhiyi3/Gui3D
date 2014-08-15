@@ -85,7 +85,8 @@ namespace Gorilla
         mMaxCharSize = ((mMaxHeight >> 6) + mCharSpacer) * mCharDataWidth;
         mMaxCharNum = mDataSize / mMaxCharSize;
         mLeftBlankNum = mMaxCharNum;
-        LogManager::getSingleton().logMessage("Font texture size " + Ogre::StringConverter::toString(mWidth) + " * " + Ogre::StringConverter::toString(mHeight));
+        LogManager::getSingleton().logMessage("Font texture size: " + Ogre::StringConverter::toString(mWidth) + " * " + Ogre::StringConverter::toString(mHeight)
+            + "with left blank: " + Ogre::StringConverter::toString(mLeftBlankNum));
 
         mImageData = new unsigned char[mDataSize];
         // Reset content (transparent, white)
@@ -182,7 +183,9 @@ namespace Gorilla
         }
     }
 
-    void FreeTypeFont::setGlyphInfo(CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel, unsigned int u2Pixel, unsigned int v2Pixel, unsigned int advance, float textureAspect)
+    void FreeTypeFont::setGlyphInfo(CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel,
+        unsigned int u2Pixel, unsigned int v2Pixel,
+        unsigned int advanceX, unsigned int advanceY, float textureAspect)
     {
         float u1 = (float)u1Pixel / (float)mWidth, v1 = (float)v1Pixel / (float)mHeight, u2 = (float)u2Pixel / (float)mWidth, v2 = (float)v2Pixel / (float)mWidth;
         Font::CodePointMap::iterator i = mCodePointMap.find(id);
@@ -195,23 +198,28 @@ namespace Gorilla
             i->second.aspectRatio = textureAspect * (u2 - u1)  / (v2 - v1);
             i->second.u1Pixel = u1Pixel;
             i->second.v1Pixel = v1Pixel;
-            i->second.advance = advance;
+            i->second.advanceX = advanceX;
+            i->second.advanceY = advanceY;
         }
         else
         {
             mCodePointMap.insert(
                 Font::CodePointMap::value_type(id, 
                 Font::GlyphInfo(id, Font::UVRect(u1, v1, u2, v2), 
-                textureAspect * (u2 - u1)  / (v2 - v1), u1Pixel, v1Pixel, advance)));
+                textureAspect * (u2 - u1)  / (v2 - v1), u1Pixel, v1Pixel, advanceX, advanceY)));
         }
     }
 
-    const FreeTypeFont::GlyphInfo *FreeTypeFont::getGlyphInfo(CodePoint id) const
+    const FreeTypeFont::GlyphInfo *FreeTypeFont::getGlyphInfo(CodePoint id)
     {
-        CodePointMap::const_iterator i = mCodePointMap.find(id);
+        CodePointMap::iterator i = mCodePointMap.find(id);
         if (i == mCodePointMap.end())
         {
             return NULL;
+        }
+        if(i->second.useCount < 0xffffffff)
+        {
+            i->second.useCount++;
         }
         return &i->second;
     }
@@ -230,7 +238,7 @@ namespace Gorilla
 
         FT_Int advance = mFtFace->glyph->advance.x >> 6;
         //FT_Int advance = mFtFace->glyph->metrics.horiAdvance >> 6;
-        unsigned char* buffer = mFtFace->glyph->bitmap.buffer;
+        unsigned char *buffer = mFtFace->glyph->bitmap.buffer;
 
         if (!buffer)
         {
@@ -272,8 +280,8 @@ namespace Gorilla
             mImage_v,  // v1
             mImage_u + ( mFtFace->glyph->advance.x >> 6 ), // u2
             mImage_v + ( mMaxHeight >> 6 ), // v2
-            //advance,
-            20,
+            mFtFace->glyph->advance.x >> 6, //mFtFace->glyph->metrics.horiAdvance >> 6,
+            mMaxHeight >> 6, //mFtFace->glyph->metrics.vertAdvance >> 6,
             mTextureAspect
             );
 
@@ -300,44 +308,6 @@ namespace Gorilla
             Ogre::PF_A8R8G8B8,
             Ogre::TEX_TYPE_2D,
             0);
-
-        //static int g_count=0;
-        //if(g_count==3)
-        //{
-        //    g_count=0;
-        //    Image img;
-        //    tex->convertToImage(img);
-        //    img.save("H:\\test.png");
-        //}
-        //g_count++;
-
-        //Image img;
-        //tex->convertToImage(img);
-        //img.save("H:\\test.png");
-
-/*
-        D3DLOCKED_RECT lockedRect;
-        mTexture->LockRect(0, &lockedRect,0, 0);
-
-        //使用类型注意
-        uchar* TexData = (uchar*)lockedRect.pBits;
-
-        for(UINT i = 0; i < mHeight; ++i)
-        {
-            for(UINT j = 0; j < mWidth; ++j)
-            {
-                //Pitch数据的总长度
-                int index = i * lockedRect.Pitch / mPixelBytes + j;
-                TexData[index] = mImageData[index];
-            }
-        }
-        mTexture->UnlockRect(0);
-*/
-
-        // for test
-        //#ifdef    _DEBUG
-        //        D3DXSaveTextureToFileA("..//media//test.png",D3DXIFF_PNG, mTexture, 0);
-        //#endif
     }
 
     void FreeTypeFont::insertGlyphInfo(CodePoint id)

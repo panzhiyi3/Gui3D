@@ -38,7 +38,7 @@ Checkbox::Checkbox(Ogre::Real x,
                    Container* parentContainer)
                    : PanelElementCallback(parentContainer), mChecked(false)
 {
-    mDesign = mParentContainer->getGUILayer()->createRectangle(x, y, width, height);
+    mDesign = mParentContainer->getGUILayer()->createRectangle(x, y, (Ogre::Real) width, (Ogre::Real) height);
 
     setPosition(x, y);
     setSize(width, height);

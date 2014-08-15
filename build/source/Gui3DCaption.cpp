@@ -43,7 +43,7 @@ Caption::Caption(Ogre::Real x,
 {
     //mCaption = mParentContainer->getGUILayer()->createCaption(getColors()->captionTextSize, x, y, text);
     mCaption = mParentContainer->getGUILayer()->createCaption("", x, y, text);
-    mCaption->size(width, height);
+    mCaption->size((Ogre::Real) width, (Ogre::Real) height);
     mCaption->align(textAlign);
     mCaption->vertical_align(verticalAlign);
     mCaption->background(getColors()->transparent);
@@ -154,7 +154,7 @@ void Caption::_actualize()
         mDesign->background_gradient(getColors()->captionBackgroundGradientType,
                                      getColors()->captionBackgroundGradientStart,
                                      getColors()->captionBackgroundGradientEnd);
-        mDesign->border(getColors()->captionBorderSize, getColors()->captionBorder);
+        mDesign->border((Ogre::Real) getColors()->captionBorderSize, getColors()->captionBorder);
     }
 }
 

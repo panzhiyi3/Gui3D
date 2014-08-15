@@ -48,7 +48,7 @@ TextZone::TextZone(Ogre::Real x,
     mCaption->colour(getColors()->textzoneText);
 
     mDesign = mParentContainer->getGUILayer()->createRectangle(x, y);
-    mDesign->border(getColors()->textzoneBorderSize,
+    mDesign->border((Ogre::Real) getColors()->textzoneBorderSize,
                     getColors()->textzoneBorder);
     mDesign->background_gradient(getColors()->textzoneBackgroundNotOveredGradientType,
                                  getColors()->textzoneBackgroundNotOveredGradientStart,

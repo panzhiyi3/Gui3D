@@ -39,7 +39,7 @@ MultipleElementsSelector::MultipleElementsSelector(Ogre::Real x,
                                                    : PanelElementCallback(parentContainer), 
                                                       mActualOveredElement(MULTIPLE_ELEMENT_SELECTOR_NO_ELEMENT)
 {
-    mDesign = mParentContainer->getGUILayer()->createRectangle(x, y, width, height);
+    mDesign = mParentContainer->getGUILayer()->createRectangle(x, y, (Ogre::Real) width, (Ogre::Real) height);
 
     mPreviousElementsButton = new Button(0, 0, 30, 30, L"", mParentContainer);
     mNextElementsButton = new Button(0, 0, 30, 30, L"", mParentContainer);

@@ -108,7 +108,7 @@ void CheckboxText::_unOver()
                                      getColors()->checkboxNotOveredGradientEnd);
     }
 
-    mDesign->border(getColors()->checkboxBorderSize, getColors()->checkboxBorder);
+    mDesign->border((Ogre::Real) getColors()->checkboxBorderSize, getColors()->checkboxBorder);
 }
 
 
@@ -128,7 +128,7 @@ void CheckboxText::_over()
                                      getColors()->checkboxOveredGradientStart,
                                      getColors()->checkboxOveredGradientEnd);
     }
-    mDesign->border(getColors()->checkboxBorderSize,
+    mDesign->border((Ogre::Real) getColors()->checkboxBorderSize,
                     getColors()->checkboxBorder);
 }
 

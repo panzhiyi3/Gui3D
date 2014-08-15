@@ -58,7 +58,7 @@ ScrollBar::ScrollBar(Ogre::Real x,
     mDesign->background_gradient(getColors()->scrollbarBackgroundGradientType,
                                  getColors()->scrollbarBackgroundGradientStart,
                                  getColors()->scrollbarBackgroundGradientEnd);
-    mDesign->border(getColors()->scrollbarBorderSize, 
+    mDesign->border((Ogre::Real) getColors()->scrollbarBorderSize, 
                     getColors()->scrollbarBorder);
 
     mBar = mParentContainer->getGUILayer()->createRectangle(x, y);
@@ -406,7 +406,7 @@ void ScrollBar::_unOverCursor()
         mCursor->background_gradient(getColors()->scrollbarCursorNotOveredGradientType,
                                      getColors()->scrollbarCursorNotOveredGradientStart,
                                      getColors()->scrollbarCursorNotOveredGradientEnd);
-        mCursor->border(getColors()->scrollbarCursorBorderSize,
+        mCursor->border((Ogre::Real) getColors()->scrollbarCursorBorderSize,
                         getColors()->scrollbarCursorBorder);
     }
     else
@@ -421,7 +421,7 @@ void ScrollBar::_overCursor()
         mCursor->background_gradient(getColors()->scrollbarCursorOveredGradientType,
                                      getColors()->scrollbarCursorOveredGradientStart,
                                      getColors()->scrollbarCursorOveredGradientEnd);
-        mCursor->border(getColors()->scrollbarCursorBorderSize,
+        mCursor->border((Ogre::Real) getColors()->scrollbarCursorBorderSize,
                         getColors()->scrollbarCursorBorder);
     }
     else
@@ -436,7 +436,7 @@ void ScrollBar::_selectCursor()
         mCursor->background_gradient(getColors()->scrollbarCursorSelectedGradientType,
                                      getColors()->scrollbarCursorSelectedGradientStart,
                                      getColors()->scrollbarCursorSelectedGradientEnd);
-        mCursor->border(getColors()->scrollbarCursorBorderSize,
+        mCursor->border((Ogre::Real) getColors()->scrollbarCursorBorderSize,
                         getColors()->scrollbarCursorBorder);
     }
     else

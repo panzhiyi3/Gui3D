@@ -44,7 +44,7 @@ Listbox::Listbox(Ogre::Real x,
     mDesign->background_gradient(getColors()->listboxBackgroundGradientType,
                                  getColors()->listboxBackgroundGradientStart,
                                  getColors()->listboxBackgroundGradientEnd);
-    mDesign->border(getColors()->listboxBorderSize,
+    mDesign->border((Ogre::Real) getColors()->listboxBorderSize,
                     getColors()->listboxBorder);
 
     _actualize();

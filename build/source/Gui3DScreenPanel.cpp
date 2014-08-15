@@ -54,7 +54,7 @@ ScreenPanel::ScreenPanel(Gui3D* gui,
         mBackground->background_gradient(mGui3D->getPanelColors()->panelGradientType,
                                          mGui3D->getPanelColors()->panelGradientColorStart,
                                          mGui3D->getPanelColors()->panelGradientColorEnd);
-        mBackground->border(mGui3D->getPanelColors()->panelBorderSize, 
+        mBackground->border((Ogre::Real) mGui3D->getPanelColors()->panelBorderSize, 
                             mGui3D->getPanelColors()->panelBorder);
     }
     else

@@ -237,7 +237,7 @@ void Button::_over()
         mDesign->background_gradient(getColors()->buttonBackgroundOveredGradientType, 
                                      getColors()->buttonBackgroundOveredGradientStart,
                                      getColors()->buttonBackgroundOveredGradientEnd);
-        mDesign->border(getColors()->buttonBorderSize, getColors()->buttonBorder);
+        mDesign->border((Ogre::Real) getColors()->buttonBorderSize, getColors()->buttonBorder);
         mCaption->colour(getColors()->buttonText);
     }
 }
@@ -252,7 +252,7 @@ void Button::_unOver()
         mDesign->background_gradient(getColors()->buttonBackgroundNotOveredGradientType, 
                                      getColors()->buttonBackgroundNotOveredGradientStart,
                                      getColors()->buttonBackgroundNotOveredGradientEnd);
-        mDesign->border(getColors()->buttonBorderSize, getColors()->buttonBorder);
+        mDesign->border((Ogre::Real) getColors()->buttonBorderSize, getColors()->buttonBorder);
         mCaption->colour(getColors()->buttonText);
     }
 }
@@ -267,7 +267,7 @@ void Button::_clicked()
         mDesign->background_gradient(getColors()->buttonBackgroundClickedGradientType, 
                                      getColors()->buttonBackgroundClickedGradientStart,
                                      getColors()->buttonBackgroundClickedGradientEnd);
-        mDesign->border(getColors()->buttonBorderSize, getColors()->buttonBorder);
+        mDesign->border((Ogre::Real) getColors()->buttonBorderSize, getColors()->buttonBorder);
         mCaption->colour(getColors()->buttonText);
     }
 }

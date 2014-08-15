@@ -50,7 +50,7 @@ ProgressBar::ProgressBar(Ogre::Real x,
     mCaption->colour(getColors()->progressbarText);
 
     mDesign = mParentContainer->getGUILayer()->createRectangle(x, y);
-    mDesign->border(getColors()->progressbarBorderSize,
+    mDesign->border((Ogre::Real) getColors()->progressbarBorderSize,
                     getColors()->progressbarBorder);
     mDesign->background_gradient(getColors()->progressbarBackgroundGradientType,
                                  getColors()->progressbarBackgroundGradientStart,
@@ -155,7 +155,7 @@ void ProgressBar::setValue(double value)
     // Make sure value is between 0 and 1
     mValue = max<double>(0, min<double>(1, value)); 
 
-    int newProgressBarRectangleWidth = mValue * mCaption->width();
+    int newProgressBarRectangleWidth = (int) ((float) mValue * mCaption->width());
 
     mProgressBarRectangle->width(newProgressBarRectangleWidth);
 

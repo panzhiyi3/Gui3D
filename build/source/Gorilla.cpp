@@ -2251,8 +2251,8 @@ namespace Gorilla
             //bottom = top + glyph->glyphHeight + texelOffsetY;
             left = cursorX - texelOffsetX;
             top = cursorY - texelOffsetY;
-            right = left + glyph->advance + texelOffsetX;
-            bottom = top + glyph->advance + texelOffsetY;
+            right = left + glyph->advanceX + texelOffsetX;
+            bottom = top + glyph->advanceY + texelOffsetY;
 
             if (clipLeft)
             {
@@ -2281,7 +2281,7 @@ namespace Gorilla
             if(fixedWidth())
             {
                 //Ogre::Real offset = std::floor((mGlyphData->mMonoWidth - glyph->glyphWidth) / 2.0f);
-                Ogre::Real offset = std::floor((mSpaceLength - glyph->advance) / 2.0f);
+                Ogre::Real offset = std::floor((mSpaceLength - glyph->advanceX) / 2.0f);
                 left += offset;
                 right += offset;
             }
@@ -2297,14 +2297,14 @@ namespace Gorilla
             //PUSH_VERTEX(mVertices, temp, right, top, glyph->texCoords[TopRight], mColour);    // Right/Top    1
 
             // Triangle A
-            PUSH_VERTEX2(mVertices, temp, left, bottom, glyph->uvRect.left, glyph->uvRect.bottom, mColour);  // Left/Bottom  3
-            PUSH_VERTEX2(mVertices, temp, right, top, glyph->uvRect.right, glyph->uvRect.top, mColour);    // Right/Top    1
-            PUSH_VERTEX2(mVertices, temp, left, top, glyph->uvRect.left, glyph->uvRect.top, mColour);     // Left/Top     0
+            PUSH_VERTEX2(mVertices, temp, left, bottom, glyph->uvRect.left + 1.0f, glyph->uvRect.bottom, mColour);  // Left/Bottom  3
+            PUSH_VERTEX2(mVertices, temp, right, top, glyph->uvRect.right + 1.0f, glyph->uvRect.top, mColour);    // Right/Top    1
+            PUSH_VERTEX2(mVertices, temp, left, top, glyph->uvRect.left + 1.0f, glyph->uvRect.top, mColour);     // Left/Top     0
 
             // Triangle B
-            PUSH_VERTEX2(mVertices, temp, left, bottom, glyph->uvRect.left, glyph->uvRect.bottom, mColour);  // Left/Bottom  3
-            PUSH_VERTEX2(mVertices, temp, right, bottom, glyph->uvRect.right, glyph->uvRect.bottom, mColour); // Right/Bottom 2
-            PUSH_VERTEX2(mVertices, temp, right, top, glyph->uvRect.right, glyph->uvRect.top, mColour);    // Right/Top    1
+            PUSH_VERTEX2(mVertices, temp, left, bottom, glyph->uvRect.left + 1.0f, glyph->uvRect.bottom, mColour);  // Left/Bottom  3
+            PUSH_VERTEX2(mVertices, temp, right, bottom, glyph->uvRect.right + 1.0f, glyph->uvRect.bottom, mColour); // Right/Bottom 2
+            PUSH_VERTEX2(mVertices, temp, right, top, glyph->uvRect.right + 1.0f, glyph->uvRect.top, mColour);    // Right/Top    1
 
             cursorX  += _getAdvance(glyph, mSpaceLength, kerning);
             lastChar = thisChar;
@@ -2321,7 +2321,7 @@ namespace Gorilla
         if(mFixedWidth)
             return pixelWidth;
         else
-            return glyph->advance + kerning;
+            return glyph->advanceX + kerning;
     }
 
 
