@@ -156,6 +156,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\source\FontManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\FreeTypeFont.cpp"
 				>
 			</File>
@@ -232,6 +236,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\source\Gui3DScreen.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\source\Gui3DScreenPanel.cpp"
 				>
 			</File>
@@ -257,6 +265,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\source\FontManager.h"
+				>
+			</File>
 			<File
 				RelativePath=".\source\FreeTypeFont.h"
 				>
@@ -351,6 +363,10 @@
 			</File>
 			<File
 				RelativePath=".\source\Gui3DProgressBar.h"
+				>
+			</File>
+			<File
+				RelativePath=".\source\Gui3DScreen.h"
 				>
 			</File>
 			<File

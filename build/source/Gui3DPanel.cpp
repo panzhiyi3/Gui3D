@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -28,12 +28,12 @@
 #include "Gui3DPanel.h"
 #include "Gui3DPanelColors.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 using namespace std;
 
-Panel::Panel(Gui3D* gui, 
+Panel::Panel(Gui3D *gui, 
              Ogre::SceneManager* sceneMgr, 
              const Ogre::Vector2& size,
              Ogre::Real distanceFromPanelToInteractWith,
@@ -47,12 +47,12 @@ Panel::Panel(Gui3D* gui,
         gui->createScreenRenderable(Ogre::Vector2(mSize.x/100, mSize.y/100), atlasName, name);
 
     mNode = sceneMgr->getRootSceneNode()->createChildSceneNode();
-    mNode->attachObject(mScreenRenderable);
+    mNode->attachObject(mScreenRenderable->mScreenRenderable);
 
     mPanelCameraNode = mNode->createChildSceneNode();
     mPanelCameraNode->setPosition(-1, 0, 7);
     mPanelCameraNode->lookAt(mNode->getPosition(), Ogre::Node::TS_PARENT);
-    
+
     mGUILayer = gui->createLayer(mScreenRenderable, name);
     
     mBackground = mGUILayer->createRectangle(0, 0, mSize.x, mSize.y);
@@ -95,8 +95,11 @@ bool Panel::injectMouseMoved(const Ogre::Ray& ray)
 {
     Ogre::Matrix4 transform;
     transform.makeTransform(mNode->getPosition(), mNode->getScale(), mNode->getOrientation());
-   
-    Ogre::AxisAlignedBox aabb = mScreenRenderable->getBoundingBox();
+
+    if(!mScreenRenderable || !mScreenRenderable->mScreenRenderable)
+        return false;
+
+    Ogre::AxisAlignedBox aabb = mScreenRenderable->mScreenRenderable->getBoundingBox();
     aabb.transform(transform);
     pair<bool, Ogre::Real> result = Ogre::Math::intersects(ray, aabb);
 

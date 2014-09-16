@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,7 +26,7 @@
 
 #include "Gui3DListbox.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 using namespace std;

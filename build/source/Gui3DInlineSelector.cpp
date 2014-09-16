@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,7 +26,7 @@
 
 #include "Gui3DInlineSelector.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 static float INLINE_SELECTOR_BUTTON_CAPTION_SPACING = 0.02f;

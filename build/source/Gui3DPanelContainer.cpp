@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,12 +26,12 @@
 
 #include "Gui3DPanelContainer.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 using namespace std;
 
-PanelContainer::PanelContainer(Gui3D* gui, const Ogre::Vector2& size)
+PanelContainer::PanelContainer(Gui3D *gui, const Ogre::Vector2& size)
     : Container(gui), mSize(size), mFocusedPanelElement(NULLPTR), 
       mMousePointer(NULLPTR), mBackground(NULLPTR)
 {

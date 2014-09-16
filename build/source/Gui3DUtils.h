@@ -3,7 +3,7 @@
 
 #include <OGRE\OgrePrerequisites.h>
 
-namespace Gui3D
+namespace Gui3DEx
 {
     /** \brief Returns the closest int to the argument. Example : 5.1 gives 5, 5.5 gives 6 and 5.8 gives 6.
     */

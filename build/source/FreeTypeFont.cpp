@@ -5,6 +5,8 @@
 
 using namespace Ogre;
 
+#define BEARING_X_SPACER 1 //·ÀÖ¹×Ö·ûÌùÍ¼×ó¶Ë¶¥¸ñ£¬µ¼ÖÂÏÔÊ¾¾â³Ý
+
 namespace Gorilla
 {
     const Ogre::String FONT_TEXTURE_BASENAME = "GUI3D_FreeTypeFontTexture";
@@ -13,6 +15,7 @@ namespace Gorilla
         : Font(textureSize, ttfSize, ttfResolution, antiAliased)
     {
         mTextureName = FONT_TEXTURE_BASENAME;
+        mCharSpacer = 2;
     }
 
     FreeTypeFont::~FreeTypeFont()
@@ -33,7 +36,6 @@ namespace Gorilla
             OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED, "FreeType init fialed", "");
         }
 
-        mCharSpacer = 5;
         if(FT_New_Face(ftLibrary, name.c_str(), 0, &mFtFace)) 
         {
             OGRE_EXCEPT(Exception::ERR_NOT_IMPLEMENTED, "FreeType can't open TTF file", "");
@@ -62,6 +64,8 @@ namespace Gorilla
             r != mCodePointRangeList.end(); ++r)
         {
             const Font::CodePointRange& range = *r;
+            int horiBearingX = 0;
+            int totalWidth = 0;
             for(Font::CodePoint cp = range.first; cp <= range.second; ++cp)
             {
                 FT_Load_Char( mFtFace, cp, FT_LOAD_RENDER);
@@ -71,8 +75,18 @@ namespace Gorilla
                 if( mFtFace->glyph->metrics.horiBearingY > mTtfMaxBearingY )
                     mTtfMaxBearingY = mFtFace->glyph->metrics.horiBearingY;
 
-                if( (mFtFace->glyph->advance.x >> 6 ) + ( mFtFace->glyph->metrics.horiBearingX >> 6 ) > mMaxWidth)
-                    mMaxWidth = (mFtFace->glyph->advance.x >> 6 ) + ( mFtFace->glyph->metrics.horiBearingX >> 6 );
+                horiBearingX = mFtFace->glyph->metrics.horiBearingX >> 6;
+                if(horiBearingX == 0)
+                {
+                    horiBearingX = BEARING_X_SPACER;
+                }
+                totalWidth = (mFtFace->glyph->advance.x >> 6 ) + horiBearingX;
+                if(totalWidth <= mFtFace->glyph->bitmap.width + 1)
+                {
+                    totalWidth = mFtFace->glyph->bitmap.width + BEARING_X_SPACER;
+                }
+                if( totalWidth > mMaxWidth)
+                    mMaxWidth = totalWidth;
             }
         }
 
@@ -107,35 +121,6 @@ namespace Gorilla
         }
 
         FT_Done_FreeType(mFtLibrary);
-    }
-
-    void FreeTypeFont::addCodePointRange(const FreeTypeFont::CodePointRange &range)
-    {
-        mCodePointRangeList.push_back(range);
-    }
-
-    void FreeTypeFont::clearCodePointRanges()
-    {
-        mCodePointRangeList.clear();
-    }
-
-    const Font::CodePointRangeList &FreeTypeFont::getCodePointRangeList() const
-    {
-        return mCodePointRangeList;
-    }
-
-    const Font::UVRect &FreeTypeFont::getGlyphTexCoords(Font::CodePoint id) const
-    {
-        Font::CodePointMap::const_iterator i = mCodePointMap.find(id);
-        if (i != mCodePointMap.end())
-        {
-            return i->second.uvRect;
-        }
-        else
-        {
-            static Font::UVRect nullRect(0.0, 0.0, 0.0, 0.0);
-            return nullRect;
-        }
     }
 
     //void FreeTypeFont::setGlyphTexCoords(Font::CodePoint id, unsigned int u1Pixel, unsigned int v1Pixel, unsigned int u2Pixel, unsigned int v2Pixel, float textureAspect)
@@ -210,20 +195,6 @@ namespace Gorilla
         }
     }
 
-    const FreeTypeFont::GlyphInfo *FreeTypeFont::getGlyphInfo(CodePoint id)
-    {
-        CodePointMap::iterator i = mCodePointMap.find(id);
-        if (i == mCodePointMap.end())
-        {
-            return NULL;
-        }
-        if(i->second.useCount < 0xffffffff)
-        {
-            i->second.useCount++;
-        }
-        return &i->second;
-    }
-
     void FreeTypeFont::renderGlyphIntoTexture(CodePoint id)
     {
         FT_Error ftResult;
@@ -248,11 +219,22 @@ namespace Gorilla
 
         int y_bearnig = ( mTtfMaxBearingY >> 6 ) - ( mFtFace->glyph->metrics.horiBearingY >> 6 );
         int x_bearing = mFtFace->glyph->metrics.horiBearingX >> 6;
+        int x_bearing_spacer = 0;
+        if(x_bearing == 0)
+        {
+            x_bearing_spacer = BEARING_X_SPACER;
+        }
+        int totalWidth = (mFtFace->glyph->advance.x >> 6 ) + x_bearing_spacer;
+        int x_bearing_right = 0;
+        if(totalWidth <= mFtFace->glyph->bitmap.width + 1)
+        {
+            x_bearing_right = BEARING_X_SPACER;
+        }
 
         for(int j = 0; j < mFtFace->glyph->bitmap.rows; ++j )
         {
             size_t row = j + mImage_v + y_bearnig;
-            UCHAR *pDest = &mImageData[(row * mWidth * mPixelBytes) + (mImage_u + x_bearing) * mPixelBytes];
+            UCHAR *pDest = &mImageData[(row * mWidth * mPixelBytes) + (mImage_u + x_bearing_spacer + x_bearing) * mPixelBytes];
             for(int k = 0; k < mFtFace->glyph->bitmap.width; ++k )
             {
                 if (mAntialiasColour)
@@ -271,14 +253,14 @@ namespace Gorilla
                     *pDest++= 0xFF;
                 }
                 // Always use the greyscale value for alpha
-                *pDest++= *buffer++; 
+                *pDest++= *buffer++;
             }
         }
 
         this->setGlyphInfo(id,
             mImage_u,  // u1
             mImage_v,  // v1
-            mImage_u + ( mFtFace->glyph->advance.x >> 6 ), // u2
+            mImage_u + x_bearing_spacer + x_bearing_right + ( mFtFace->glyph->advance.x >> 6 ), // u2
             mImage_v + ( mMaxHeight >> 6 ), // v2
             mFtFace->glyph->advance.x >> 6, //mFtFace->glyph->metrics.horiAdvance >> 6,
             mMaxHeight >> 6, //mFtFace->glyph->metrics.vertAdvance >> 6,
@@ -286,10 +268,11 @@ namespace Gorilla
             );
 
         // Advance a column
-        mImage_u += (advance + mCharSpacer);
+        //mImage_u += (advance + mCharSpacer); //BUG
+        mImage_u += mMaxWidth + mCharSpacer;
 
         // If at end of row
-        if( mWidth - 1 < mImage_u + ( advance ) )
+        if( mWidth - 1 < mImage_u + ( mMaxWidth ) )
         {
             mImage_v += ( mMaxHeight >> 6 ) + mCharSpacer;
             mImage_u = 0;
@@ -308,6 +291,16 @@ namespace Gorilla
             Ogre::PF_A8R8G8B8,
             Ogre::TEX_TYPE_2D,
             0);
+
+        //static int g_count=0;
+        //if(g_count==3)
+        //{
+        //    g_count=0;
+        //    Image img;
+        //    tex->convertToImage(img);
+        //    img.save("H:\\test.png");
+        //}
+        //g_count++;
     }
 
     void FreeTypeFont::insertGlyphInfo(CodePoint id)
@@ -317,25 +310,6 @@ namespace Gorilla
             removeGlyph(getLessUseChar());
         }
         renderGlyphIntoTexture(id);
-    }
-
-    bool FreeTypeFont::hasBlankInTexture() const 
-    { 
-        return mLeftBlankNum > 0; 
-    }
-
-    Font::CodePoint FreeTypeFont::getLessUseChar()
-    {
-        CodePointMap::iterator itr = mCodePointMap.begin();
-        CodePointMap::iterator itrEnd = mCodePointMap.end();
-        CodePointMap::iterator itrLess = mCodePointMap.begin();
-        while(itr != itrEnd)
-        {
-            if(itr->second.useCount < itrLess->second.useCount)
-                itrLess = itr;
-            itr++;
-        }
-        return itrLess->second.codePoint;   
     }
 
     void FreeTypeFont::removeGlyph(CodePoint id)

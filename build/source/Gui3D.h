@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,28 +26,17 @@
 #ifndef Gui3D_H
 #define Gui3D_H
 
-
-
 #include <map>
 #include <vector>
 
 #include <OGRE\Ogre.h>
 
 #include "Gorilla.h"
-
+#include "Gui3DScreen.h"
 #include "Gui3DPanelColors.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
-
-/** \brief Internal use only. Used to keep track of all screens's layers
-*/
-typedef struct Gui3DScreenRenderable Gui3DScreenRenderable;
-
-/** \brief Internal use only. Used to keep track of all screenRenderable's layers
-*/
-typedef struct Gui3DScreen Gui3DScreen;
-
 // TODO : Screens methods : implements something more ?
 
 /*! class. Gui3D
@@ -60,8 +49,9 @@ public:
     /** \brief The PanelColors gave as argument will automatically be deleted in Gui3D destructor, or
     in the setPanelColors() method
     */
-    Gui3D(PanelColors*);
-    
+    Gui3D(PanelColors *);
+    Gui3D();
+
     ~Gui3D();
 
     /** \brief /!\ Be careful when using this. Return the main Gorilla object.
@@ -70,59 +60,59 @@ public:
 
     // ScreenRenderables methods (2D Screens rendered in 3D)
 
-    Gorilla::Layer* getLayer(const Ogre::String& screenRenderableName,
-                             const Ogre::String& layerName);
+    Gorilla::Layer* getLayer(const Ogre::String &screenRenderableName,
+                             const Ogre::String &layerName);
 
-    Gorilla::Layer* getLayer(Gorilla::ScreenRenderable* screenRenderable,
-                             const Ogre::String& layerName);
+    Gorilla::Layer* getLayer(Gui3DScreenRenderable *screenRenderable,
+                             const Ogre::String &layerName);
 
-    Gorilla::Layer* createLayer(Gorilla::ScreenRenderable* screenRenderable,
-                                const Ogre::String& layerName);
+    Gorilla::Layer* createLayer(Gui3DScreenRenderable *screenRenderable,
+                                const Ogre::String &layerName);
 
-    Gorilla::Layer* createLayer(const Ogre::String& screenRenderableName,
-                                const Ogre::String& layerName);
-    
-    Gorilla::ScreenRenderable* getScreenRenderable(const Ogre::String& name);
-    
-    Gorilla::ScreenRenderable* createScreenRenderable(const Ogre::Vector2& pos, 
-                                                      const Ogre::String& atlasName, 
-                                                      const Ogre::String& name);
+    Gorilla::Layer* createLayer(const Ogre::String &screenRenderableName,
+                                const Ogre::String &layerName);
+
+    Gui3DScreenRenderable *getScreenRenderable(const Ogre::String &name);
+
+    Gui3DScreenRenderable *createScreenRenderable(const Ogre::Vector2 &pos, 
+                                                      const Ogre::String &atlasName, 
+                                                      const Ogre::String &name);
 
     // Screens methods (2D screen)
 
-    Gorilla::Layer* getLayerScreen(const Ogre::String& screenName,
-                                   const Ogre::String& layerName);
+    Gorilla::Layer* getLayerScreen(const Ogre::String &screenName,
+                                   const Ogre::String &layerName);
 
-    Gorilla::Layer* getLayerScreen(Gorilla::Screen* screen,
-                                   const Ogre::String& layerName);
+    Gorilla::Layer* getLayerScreen(Gui3DScreen *screen,
+                                   const Ogre::String &layerName);
 
-    Gorilla::Layer* createLayerScreen(Gorilla::Screen* screen,
-                                      const Ogre::String& layerName);
+    Gorilla::Layer* createLayerScreen(Gui3DScreen *screen,
+                                      const Ogre::String &layerName);
 
-    Gorilla::Layer* createLayerScreen(const Ogre::String& screenName,
-                                      const Ogre::String& layerName);
+    Gorilla::Layer* createLayerScreen(const Ogre::String &screenName,
+                                      const Ogre::String &layerName);
 
-    Gorilla::Screen* createScreen(Ogre::Viewport* vp, 
-                                  const Ogre::String& atlasName, const Ogre::String& name);
+    Gui3DScreen *createScreen(Ogre::Viewport *vp, 
+                                  const Ogre::String &atlasName, const Ogre::String &name);
 
-    Gorilla::Screen* getScreen(const Ogre::String& name);
+    Gui3DScreen *getScreen(const Ogre::String &name);
 
     // General methods
 
-    void loadAtlas(const Ogre::String& name);
+    void loadAtlas(const Ogre::String &name);
 
-    void destroyScreenRenderable(const Ogre::String& screenRenderableName);
+    void destroyScreenRenderable(const Ogre::String &screenRenderableName);
 
-    void destroyScreenRenderable(Gorilla::ScreenRenderable* screenRenderable);
+    void destroyScreenRenderable(Gui3DScreenRenderable *screenRenderable);
 
-    void destroyScreen(const Ogre::String& screenName);
+    void destroyScreen(const Ogre::String &screenName);
 
-    void destroyScreen(Gorilla::Screen* screen);
+    void destroyScreen(Gui3DScreen *screen);
 
-    /** \brief Set the colors rules of the Gui3D. 
-    The PanelColors object will automatically be destroyed by the Gui3D destructor.
+    /** \brief Set the colors rules of the Gui3DEx. 
+    The PanelColors object will automatically be destroyed by the Gui3DEx destructor.
     */
-    void setPanelColors(PanelColors*);
+    void setPanelColors(PanelColors *);
 
     PanelColors* getPanelColors();
 
@@ -131,9 +121,9 @@ protected:
 
     std::vector<Ogre::String> mAtlas;
 
-    std::map<Ogre::String, Gui3DScreenRenderable*> mScreenRenderables;
+    std::map<Ogre::String, Gui3DScreenRenderable *> mScreenRenderables;
 
-    std::map<Ogre::String, Gui3DScreen*> mScreens;
+    std::map<Ogre::String, Gui3DScreen *> mScreens;
 
     PanelColors* mPanelColors;
 

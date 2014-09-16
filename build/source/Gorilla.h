@@ -444,17 +444,17 @@ namespace Gorilla
         Each screen is considered a new batch. To reduce your batch count in Gorilla, 
         reduce the number of screens you use.
         */
-        Screen* createScreen(Ogre::Viewport*, const Ogre::String& atlas);
+        Screen* createScreen(Ogre::Viewport *vp, const Ogre::String& atlas);
 
         /*! function. destroyScreen
         desc.
         Destroy an existing screen, its layers and the contents of those layers.
         */
-        void destroyScreen(Screen*);
+        void destroyScreen(Screen *screen);
 
         /*! function. createScreenRenderable
         */
-        ScreenRenderable* createScreenRenderable(const Ogre::Vector2& maxSize, const Ogre::String& atlas);
+        ScreenRenderable* createScreenRenderable(const Ogre::Vector2 &pos, const Ogre::String& atlas);
 
         /*! function. destroyScreen
         desc.
@@ -528,7 +528,6 @@ namespace Gorilla
     */
     class TextureAtlas : public Ogre::GeneralAllocatedObject
     {
-
         friend class Silverback;
 
     public:
@@ -664,13 +663,22 @@ namespace Gorilla
             return 1.0f / Ogre::Real(mTexture->getHeight());
         }
 
-        /*! function. getPass
+        /*! function. get2DPass
         desc.
         Get the first pass of the material used by this TextureAtlas
         */
         inline Ogre::Pass* get2DPass() const
         {
             return m2DPass;
+        }
+
+        /*! function. get3DPass
+        desc.
+        Get the first pass of the material used by this TextureAtlas
+        */
+        inline Ogre::Pass* get3DPass() const
+        {
+            return m3DPass;
         }
 
         /*! function. getGlyphMonoWidth
@@ -951,7 +959,7 @@ namespace Gorilla
         desc.
         Use Silverback::destroyScreen
         */
-        ~Screen();
+        virtual ~Screen();
 
         // Internal -- Not used, but required by renderQueueListener
         void renderQueueStarted(Ogre::uint8, const Ogre::String&, bool&) {}
@@ -989,7 +997,7 @@ namespace Gorilla
 
     public:
 
-        ScreenRenderable(const Ogre::Vector2& maxSize, TextureAtlas*);
+        ScreenRenderable(const Ogre::Vector2& pos, TextureAtlas*);
 
         ~ScreenRenderable();
 
@@ -1262,7 +1270,7 @@ namespace Gorilla
         desc.
         Creates a markup text
         */
-        MarkupText *createMarkupText(Ogre::uint defaultGlyphIndex, Ogre::Real x, Ogre::Real y, const Ogre::String& text);
+        MarkupText *createMarkupText(const Ogre::String &fontName, Ogre::Real x, Ogre::Real y, const std::wstring &text);
 
         /*! function. destroyMarkupText
         desc.
@@ -2896,7 +2904,7 @@ namespace Gorilla
         desc.
         Get where the text should be drawn vertically.
         */
-        Ogre::Real  left() const
+        Ogre::Real left() const
         {
             return mLeft;
         }
@@ -2908,7 +2916,7 @@ namespace Gorilla
         If the TextAlignment is Right Aligned, then this will be the right-side of the last character drawn (with in width limits).
         If the TextAlignment is Centre Aligned, then this will be the center of the drawn text drawn (with in width limits).
         */
-        void  left(const Ogre::Real& left)
+        void left(const Ogre::Real &left)
         {
             mLeft = left;
             mDirty = true;
@@ -2920,7 +2928,7 @@ namespace Gorilla
         desc.
         Get where the text should be drawn vertically.
         */
-        Ogre::Real  top() const
+        Ogre::Real top() const
         {
             return mTop;
         }
@@ -2929,7 +2937,7 @@ namespace Gorilla
         desc.
         Set where the text should be drawn vertically.
         */
-        void  top(const Ogre::Real& top)
+        void top(const Ogre::Real &top)
         {
             mTop = top;
             mDirty = true;
@@ -2942,7 +2950,7 @@ namespace Gorilla
         desc.
         Set the maximum width and height of the text can draw into.
         */
-        void size(const Ogre::Real& width, const Ogre::Real& height)
+        void size(const Ogre::Real &width, const Ogre::Real &height)
         {
             mWidth = width;
             mHeight = height;
@@ -2963,7 +2971,7 @@ namespace Gorilla
         desc.
         Set the maximum width of the text can draw into.
         */
-        void  width(const Ogre::Real& width)
+        void width(const Ogre::Real &width)
         {
             mWidth = width;
             mDirty = true;
@@ -2983,7 +2991,7 @@ namespace Gorilla
         desc.
         Set the maximum height of the text can draw into.
         */
-        void  height(const Ogre::Real& height)
+        void height(const Ogre::Real &height)
         {
             mHeight = height;
             mDirty = true;
@@ -3004,7 +3012,7 @@ namespace Gorilla
         desc.
         Get the text indented to show.
         */
-        Ogre::String  text() const
+        std::wstring text() const
         {
             return mText;
         }
@@ -3013,7 +3021,7 @@ namespace Gorilla
         desc.
         Set the text to show.
         */
-        void  text(const Ogre::String& text)
+        void text(const std::wstring &text)
         {
             mText = text;
             mTextDirty = true;
@@ -3025,7 +3033,7 @@ namespace Gorilla
         desc.
         Get the background colour
         */
-        Ogre::ColourValue  background() const
+        Ogre::ColourValue background() const
         {
             return mBackground;
         }
@@ -3034,7 +3042,7 @@ namespace Gorilla
         desc.
         Set the background colour
         */
-        void  background(const Ogre::ColourValue& background)
+        void background(const Ogre::ColourValue &background)
         {
             mBackground = background;
             mDirty = true;
@@ -3045,7 +3053,7 @@ namespace Gorilla
         desc.
         Set the background colour
         */
-        void  background(Gorilla::Colours::Colour background)
+        void background(Gorilla::Colours::Colour background)
         {
             if (background == Colours::None)
                 mBackground.a = 0;
@@ -3061,13 +3069,13 @@ namespace Gorilla
         note.
         This shouldn't be need to be called by the user.
         */
-        void               _redraw();
+        void _redraw();
 
-        void               _calculateCharacters();
+        void _calculateCharacters();
 
     protected:
 
-        MarkupText(Ogre::uint defaultGlyphIndex, Ogre::Real left, Ogre::Real top, const Ogre::String& text, Layer* parent);
+        MarkupText(const Ogre::String &fontName, Ogre::Real left, Ogre::Real top, const std::wstring &text, Layer *parent);
 
         ~MarkupText() {}
 
@@ -3078,14 +3086,17 @@ namespace Gorilla
             Ogre::Vector2        mPosition[4];
             Ogre::Vector2        mUV[4];
             Ogre::ColourValue    mColour;
-            size_t               mIndex;
+            unsigned int         mIndex;
         };
 
-        Layer*                mLayer;
-        GlyphData*            mDefaultGlyphData;
+        Layer                *mLayer;
+        //GlyphData            *mDefaultGlyphData;
         Ogre::Real            mLeft, mTop, mWidth, mHeight;
         Ogre::Real            mMaxTextWidth;
-        Ogre::String          mText;
+        Ogre::Real            mLetterSpacing;
+        Ogre::Real            mLineHeight;
+        Ogre::Real            mSpaceLength;
+        std::wstring          mText;
         Ogre::ColourValue     mBackground;
         bool                  mDirty, mTextDirty;
         buffer<Character>     mCharacters;

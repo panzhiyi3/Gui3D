@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -32,12 +32,12 @@
 
 #include "Gorilla.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 /*! class. PanelColors
     desc.
-        Interface for colors of the Gui3D elements.
+        Interface for colors of the Gui3DEx elements.
     note.
         By default, an element will use its gradients, colors and borders definitions.
         To use sprites, you have to set ALL the sprite names (each has to be different of "" or "none"), and

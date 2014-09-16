@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,8 +26,6 @@
 #ifndef Gui3DScreenPanel_H
 #define Gui3DScreenPanel_H
 
-
-
 #include <vector>
 
 #include "Gorilla.h"
@@ -35,7 +33,7 @@
 #include "Gui3D.h"
 #include "Gui3DPanelContainer.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 //
@@ -44,8 +42,8 @@ class ScreenPanel : public PanelContainer
 public:
     /** \brief Create a new layer on the @screen to display widgets.
     */
-    ScreenPanel(Gui3D* gui, 
-                Gorilla::Screen* screen, 
+    ScreenPanel(Gui3D *gui, 
+                Gui3DScreen *screen, 
                 const Ogre::Vector2& startPosition,
                 const Ogre::Vector2& size,
                 const Ogre::String& atlasName,
@@ -119,7 +117,7 @@ public:
                                    const std::wstring& text);
 
 protected:
-    Gorilla::Screen* mScreen;
+    Gui3DScreen *mScreen;
     Ogre::Vector2 mStartPosition;
 };
 

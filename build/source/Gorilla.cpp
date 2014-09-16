@@ -30,6 +30,7 @@ THE SOFTWARE.
 */
 
 #include "Gorilla.h"
+#include "FontManager.h"
 
 #pragma warning ( disable : 4244 )
 
@@ -175,8 +176,6 @@ namespace Gorilla
 
     void  TextureAtlas::_loadTexture(Ogre::ConfigFile::SettingsMultiMap* settings)
     {
-
-
         Ogre::String name, data;
         Ogre::ConfigFile::SettingsMultiMap::iterator i;
         for (i = settings->begin(); i != settings->end(); ++i)
@@ -498,7 +497,6 @@ namespace Gorilla
 
         Ogre::TextureUnitState *texUnit = pass->createTextureUnitState();
         texUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
-        //texUnit->setTextureFiltering(Ogre::FO_NONE, Ogre::FO_NONE, Ogre::FO_NONE);
         texUnit->setTextureFiltering(Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC);
 
         texUnit = pass->createTextureUnitState();
@@ -538,7 +536,11 @@ namespace Gorilla
         pass->setLightingEnabled(false);
         pass->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
 
-        Ogre::TextureUnitState* texUnit = pass->createTextureUnitState();
+        Ogre::TextureUnitState *texUnit = pass->createTextureUnitState();
+        texUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
+        texUnit->setTextureFiltering(Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC);
+
+        texUnit = pass->createTextureUnitState();
         texUnit->setTextureAddressingMode(Ogre::TextureUnitState::TAM_CLAMP);
         texUnit->setTextureFiltering(Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC, Ogre::FO_ANISOTROPIC);
 
@@ -548,7 +550,6 @@ namespace Gorilla
     void  TextureAtlas::_create2DMaterial()
     {
         std::string matName = "Gorilla2D." + mTexture->getName();
-        //std::string matName = "Gorilla2D";
         m2DMaterial = Ogre::MaterialManager::getSingletonPtr()->getByName(matName);
 
         if (m2DMaterial.isNull())
@@ -556,12 +557,11 @@ namespace Gorilla
 
         m2DPass = m2DMaterial->getTechnique(0)->getPass(0);
         m2DPass->getTextureUnitState(0)->setTextureName(mTexture->getName());
-        m2DPass->getTextureUnitState(1)->setTextureName("GUI3D_FreeTypeFontTexturedefault");
+        //m2DPass->getTextureUnitState(1)->setTextureName("GUI3D_FreeTypeFontTexturedefault");
     }
 
     void  TextureAtlas::_create3DMaterial()
     {
-
         std::string matName = "Gorilla3D." + mTexture->getName();
         m3DMaterial = Ogre::MaterialManager::getSingletonPtr()->getByName(matName);
 
@@ -570,12 +570,11 @@ namespace Gorilla
 
         m3DPass = m3DMaterial->getTechnique(0)->getPass(0);
         m3DPass->getTextureUnitState(0)->setTextureName(mTexture->getName());
-
+        //m3DPass->getTextureUnitState(1)->setTextureName("GUI3D_FreeTypeFontTexturedefault");
     }
 
     void  TextureAtlas::_calculateCoordinates()
     {
-
         Ogre::RenderSystem* rs = Ogre::Root::getSingletonPtr()->getRenderSystem();
 
         Ogre::Real texelX =  rs->getHorizontalTexelOffset(),
@@ -715,7 +714,7 @@ namespace Gorilla
 
     FontManager &Silverback::getFontManager()
     {
-        return mFontManager;
+         return mFontManager;
     }
 
     void Silverback::loadAtlas(const Ogre::String &name, const Ogre::String &group)
@@ -732,7 +731,7 @@ namespace Gorilla
         return screen;
     }
 
-    ScreenRenderable* Silverback::createScreenRenderable(const Ogre::Vector2& maxSize, const Ogre::String& atlas_name)
+    ScreenRenderable* Silverback::createScreenRenderable(const Ogre::Vector2 &maxSize, const Ogre::String& atlas_name)
     {
         TextureAtlas* atlas = (*mAtlases.find(atlas_name)).second;
         ScreenRenderable* screen = OGRE_NEW ScreenRenderable(maxSize, atlas);
@@ -765,9 +764,32 @@ namespace Gorilla
 
     void Silverback::onFontTextureDirty(const Ogre::String &texName)
     {
-        for(std::vector<Screen*>::iterator it = mScreens.begin(); it != mScreens.end(); it++)
+        for(std::vector<Screen*>::iterator itr = mScreens.begin(); itr != mScreens.end(); itr++)
         {
-            (*it)->updateFontTexture(texName);
+            (*itr)->updateFontTexture(texName);
+        }
+
+        Font *font = mFontManager.getDefaultFont();
+        if(font)
+        {
+            for(std::map<Ogre::String, TextureAtlas*>::iterator itr = mAtlases.begin(); itr != mAtlases.end(); itr++)
+            {
+                TextureAtlas *atlas = itr->second;
+                if(atlas->get2DPass())
+                {
+                    if(atlas->get2DPass()->getTextureUnitState(1))
+                    {
+                        atlas->get2DPass()->getTextureUnitState(1)->setTextureName(font->getTextureName());
+                    }
+                }
+                if(atlas->get3DPass())
+                {
+                    if(atlas->get3DPass()->getTextureUnitState(1))
+                    {
+                        atlas->get3DPass()->getTextureUnitState(1)->setTextureName(font->getTextureName());
+                    }
+                }
+            }
         }
     }
 
@@ -1007,7 +1029,6 @@ namespace Gorilla
 
     void LayerContainer::_renderVertices(bool force)
     {
-
         if (mIndexRedrawNeeded == false)
             if (!force)
                 return;
@@ -1037,7 +1058,6 @@ namespace Gorilla
         mVertexBuffer->unlock();
         mRenderOpPtr->vertexData->vertexCount = knownVertexCount;
     }
-
 
     Screen::Screen(Ogre::Viewport* viewport, TextureAtlas* atlas)
         : LayerContainer(atlas), mViewport(viewport), mScale(1,1,1), mIsVisible(true), mCanRender(false)
@@ -1131,7 +1151,6 @@ namespace Gorilla
             else
                 mVertexTransform.makeTransform(Ogre::Vector3::ZERO, mScale, Ogre::Quaternion(1,0,0,0));
 
-
             force = true;
         }
 
@@ -1160,7 +1179,6 @@ namespace Gorilla
         }
 
     }
-
 
 
     ScreenRenderable::ScreenRenderable(const Ogre::Vector2& maxSize, TextureAtlas* atlas)
@@ -1268,7 +1286,6 @@ namespace Gorilla
 
     void Layer::destroyAllRectangles()
     {
-
         for (Rectangles::iterator it = mRectangles.begin(); it != mRectangles.end(); it++)
         {
             OGRE_DELETE (*it);
@@ -1299,7 +1316,6 @@ namespace Gorilla
 
     void Layer::destroyAllPolygons()
     {
-
         for (Polygons::iterator it = mPolygons.begin(); it != mPolygons.end(); it++)
         {
             OGRE_DELETE (*it);
@@ -1327,7 +1343,6 @@ namespace Gorilla
 
     void Layer::destroyAllLineLists()
     {
-
         for (LineLists::iterator it = mLineLists.begin(); it != mLineLists.end(); it++)
         {
             OGRE_DELETE (*it);
@@ -1355,7 +1370,6 @@ namespace Gorilla
 
     void Layer::destroyAllQuadLists()
     {
-
         for (QuadLists::iterator it = mQuadLists.begin(); it != mQuadLists.end(); it++)
         {
             OGRE_DELETE (*it);
@@ -1383,7 +1397,6 @@ namespace Gorilla
 
     void Layer::destroyAllCaptions()
     {
-
         for (Captions::iterator it = mCaptions.begin(); it != mCaptions.end(); it++)
         {
             OGRE_DELETE (*it);
@@ -1392,9 +1405,9 @@ namespace Gorilla
         mCaptions.clear();
     }
 
-    MarkupText* Layer::createMarkupText(Ogre::uint defaultGlyphIndex, Ogre::Real x, Ogre::Real y, const Ogre::String& text)
+    MarkupText* Layer::createMarkupText(const Ogre::String &fontName, Ogre::Real x, Ogre::Real y, const std::wstring &text)
     {
-        MarkupText* markuptext = OGRE_NEW MarkupText(defaultGlyphIndex, x, y, text, this);
+        MarkupText* markuptext = OGRE_NEW MarkupText(fontName, x, y, text, this);
         mMarkupTexts.push_back(markuptext);
         return markuptext;
     }
@@ -1432,67 +1445,56 @@ namespace Gorilla
         // Render/redraw rectangles
         for (Rectangles::iterator it = mRectangles.begin(); it != mRectangles.end(); it++)
         {
-
             if ((*it)->mDirty || force)
                 (*it)->_redraw();
 
             for (i=0; i < (*it)->mVertices.size(); i++)
                 vertices.push_back((*it)->mVertices[i]);
-
         }
 
         // Render/redraw polygons
         for (Polygons::iterator it = mPolygons.begin(); it != mPolygons.end(); it++)
         {
-
             if ((*it)->mDirty || force)
                 (*it)->_redraw();
 
             for (i=0; i < (*it)->mVertices.size(); i++)
                 vertices.push_back((*it)->mVertices[i]);
-
         }
 
         // Render/redraw line lists
         for (LineLists::iterator it = mLineLists.begin(); it != mLineLists.end(); it++)
         {
-
             if ((*it)->mDirty || force)
                 (*it)->_redraw();
 
             for (i=0; i < (*it)->mVertices.size(); i++)
                 vertices.push_back((*it)->mVertices[i]);
-
         }
 
         // Render/redraw quad lists
         for (QuadLists::iterator it = mQuadLists.begin(); it != mQuadLists.end(); it++)
         {
-
             if ((*it)->mDirty || force)
                 (*it)->_redraw();
 
             for (i=0; i < (*it)->mVertices.size(); i++)
                 vertices.push_back((*it)->mVertices[i]);
-
         }
 
         // Render/redraw caption
         for (Captions::iterator it = mCaptions.begin(); it != mCaptions.end(); it++)
         {
-
             if ((*it)->mDirty || force)
                 (*it)->_redraw();
 
             for (i=0; i < (*it)->mVertices.size(); i++)
                 vertices.push_back((*it)->mVertices[i]);
-
         }
 
         // Render/redraw caption
         for (MarkupTexts::iterator it = mMarkupTexts.begin(); it != mMarkupTexts.end(); it++)
         {
-
             if ((*it)->mTextDirty || force)
                 (*it)->_calculateCharacters();
 
@@ -1501,7 +1503,6 @@ namespace Gorilla
 
             for (i=0; i < (*it)->mVertices.size(); i++)
                 vertices.push_back((*it)->mVertices[i]);
-
         }
 
         if (mAlphaModifier != 1.0f)
@@ -1557,21 +1558,20 @@ namespace Gorilla
             Ogre::Vector2 uv = mLayer->_getSolidUV();
 
             // North
-            PUSH_TRIANGLE(mVertices, temp, a, j, i, uv, mBorderColour[Border_North])
-                PUSH_TRIANGLE(mVertices, temp, a, b, j, uv, mBorderColour[Border_North])
+            PUSH_TRIANGLE(mVertices, temp, a, j, i, uv, mBorderColour[Border_North]);
+            PUSH_TRIANGLE(mVertices, temp, a, b, j, uv, mBorderColour[Border_North]);
 
-                // East
-                PUSH_TRIANGLE(mVertices, temp, d, j, b, uv, mBorderColour[Border_East])
-                PUSH_TRIANGLE(mVertices, temp, d, l, j, uv, mBorderColour[Border_East])
+            // East
+            PUSH_TRIANGLE(mVertices, temp, d, j, b, uv, mBorderColour[Border_East]);
+            PUSH_TRIANGLE(mVertices, temp, d, l, j, uv, mBorderColour[Border_East]);
 
-                // South
-                PUSH_TRIANGLE(mVertices, temp, k, d, c, uv, mBorderColour[Border_South])
-                PUSH_TRIANGLE(mVertices, temp, k, l, d, uv, mBorderColour[Border_South])
+            // South
+            PUSH_TRIANGLE(mVertices, temp, k, d, c, uv, mBorderColour[Border_South]);
+            PUSH_TRIANGLE(mVertices, temp, k, l, d, uv, mBorderColour[Border_South]);
 
-                // West
-                PUSH_TRIANGLE(mVertices, temp, k, a, i, uv, mBorderColour[Border_West])
-                PUSH_TRIANGLE(mVertices, temp, k, c, a, uv, mBorderColour[Border_West])
-
+            // West
+            PUSH_TRIANGLE(mVertices, temp, k, a, i, uv, mBorderColour[Border_West]);
+            PUSH_TRIANGLE(mVertices, temp, k, c, a, uv, mBorderColour[Border_West]);
         }
 
         // Fill
@@ -2076,7 +2076,7 @@ namespace Gorilla
         mHeight         = 0.0f;
         mLetterSpacing  = 0.0f;
         mLineHeight    = 0.0f;
-        mSpaceLength    = Silverback::getSingleton().getFontManager().getDefaultFont()->getPixelSize();
+        mSpaceLength    = Silverback::getSingleton().getFontManager().getDefaultFont()->getFontPixelSize();
         mText           = caption;
         mColour         = Ogre::ColourValue::White;
         mBackground.a   = 0.0f;
@@ -2095,7 +2095,7 @@ namespace Gorilla
 
         if(font)
         {
-            unsigned wchar_t thisChar = 0, lastChar = 0;
+            wchar_t thisChar = 0, lastChar = 0;
             const Font::GlyphInfo *glyph = 0;
             retSize.x = 0;
             retSize.y = mLineHeight;
@@ -2211,7 +2211,7 @@ namespace Gorilla
         else if (mVerticalAlign == VerticalAlign_Bottom)
             cursorY = mTop +  mHeight - mLineHeight;
 
-        unsigned wchar_t thisChar = 0, lastChar = 0;
+        wchar_t thisChar = 0, lastChar = 0;
         Vertex temp;
         mClippedLeftIndex = std::string::npos;
         mClippedRightIndex = std::string::npos;
@@ -2230,14 +2230,12 @@ namespace Gorilla
                 continue;
             }
 
-            //if (  thisChar < mGlyphData->mRangeBegin || thisChar > mGlyphData->mRangeEnd  )
             if(!font->isCodeIdInRange(thisChar))
             {
                 lastChar = 0;
                 continue;
             }
 
-            //glyph = mGlyphData->getGlyph(thisChar);
             glyph = fontMgr.getGlyphInfo(thisChar);
             if (glyph == 0)
                 continue;
@@ -2311,7 +2309,6 @@ namespace Gorilla
 
         } // for
 
-
         mDirty = false;
     }
 
@@ -2325,18 +2322,18 @@ namespace Gorilla
     }
 
 
-    MarkupText::MarkupText(Ogre::uint defaultGlyphIndex, Ogre::Real left, Ogre::Real top, const Ogre::String& text, Layer* parent)
+    MarkupText::MarkupText(const Ogre::String &fontName, Ogre::Real left, Ogre::Real top, const std::wstring& text, Layer* parent)
         : mLayer(parent)
     {
-        mDefaultGlyphData = mLayer->_getGlyphData(defaultGlyphIndex);
+        //mDefaultGlyphData = mLayer->_getGlyphData(defaultGlyphIndex);
 
-        if (mDefaultGlyphData == 0)
+        if(!Silverback::getSingleton().getFontManager().getDefaultFont())
         {
             mDirty          = false;
             mTextDirty      = false;
 #if GORILLA_USES_EXCEPTIONS == 1
             std::ostringstream s;
-            s << "Glyph data [Font." << defaultGlyphIndex << "] not found";
+            s << "Font [Name:\"" << fontName << "\"] not found";
             OGRE_EXCEPT( Ogre::Exception::ERR_ITEM_NOT_FOUND, s.str(), __FUNC__ );
 #else
             return;
@@ -2350,9 +2347,11 @@ namespace Gorilla
         mTop            = top;
         mWidth          = 0.0f;
         mHeight         = 0.0f;
+        mLetterSpacing  = 0.0f;
+        mLineHeight     = Silverback::getSingleton().getFontManager().getDefaultFont()->getFontPixelSize();
+        mSpaceLength    = Silverback::getSingleton().getFontManager().getDefaultFont()->getFontPixelSize();
         mText           = text;
         mBackground.a   = 0.0f;
-
     }
 
     void MarkupText::_calculateCharacters()
@@ -2360,9 +2359,15 @@ namespace Gorilla
         if (mTextDirty == false)
             return;
 
+        FontManager &fontMgr = Silverback::getSingleton().getFontManager();
+        Font *font = fontMgr.getDefaultFont();
+        if(!font)
+            return;
+
         Ogre::Real cursorX = mLeft, cursorY = mTop, kerning = 0, texelOffsetX = mLayer->_getTexelX(), texelOffsetY = mLayer->_getTexelY(), right = 0, bottom = 0, left = 0, top = 0;
         unsigned int thisChar = 0, lastChar = 0;
-        Glyph* glyph = 0;
+        //Glyph* glyph = 0;
+        const Font::GlyphInfo *glyph = NULL;
 
         mMaxTextWidth = 0;
 
@@ -2372,37 +2377,36 @@ namespace Gorilla
         Ogre::ColourValue colour = mLayer->_getMarkupColour(0);
         bool fixedWidth = false;
 
-        GlyphData* glyphData = mDefaultGlyphData;
-        Ogre::Real lineHeight = glyphData->mLineHeight;
+        //GlyphData* glyphData = mDefaultGlyphData;
+        //Ogre::Real lineHeight = glyphData->mLineHeight;
 
         for(size_t i=0;i < mText.length();i++)
         {
-
             thisChar = mText[i];
 
-            if (thisChar == ' ')
+            if (thisChar == L' ')
             {
                 lastChar = thisChar;
-                cursorX += glyphData->mSpaceLength;
+                cursorX += mSpaceLength;
                 continue;
             }
 
-            if (thisChar == '\n')
+            if (thisChar == L'\n')
             {
                 lastChar = thisChar;
                 cursorX = mLeft;
-                cursorY += lineHeight;
-                lineHeight = glyphData->mLineHeight;
+                cursorY += mLineHeight;
                 continue;
             }
 
-            if (  thisChar < glyphData->mRangeBegin || thisChar > glyphData->mRangeEnd  )
+            //if(thisChar < glyphData->mRangeBegin || thisChar > glyphData->mRangeEnd)
+            if(!font->isCodeIdInRange(thisChar))
             {
                 lastChar = 0;
                 continue;
             }
 
-            if (thisChar == '%' && markupMode == false)
+            if (thisChar == L'%' && markupMode == false)
             {
                 markupMode = true;
                 continue;
@@ -2410,7 +2414,7 @@ namespace Gorilla
 
             if (markupMode == true)
             {
-                if (thisChar == '%')
+                if (thisChar == L'%')
                 {
                     // Escape Character.
                 }
@@ -2418,26 +2422,26 @@ namespace Gorilla
                 {
                     markupMode = false;
 
-                    if (thisChar >= '0' && thisChar <= '9')
+                    if (thisChar >= L'0' && thisChar <= L'9')
                     {
                         colour = mLayer->_getMarkupColour(thisChar - 48);
                     }
-                    else if (thisChar == 'R' || thisChar == 'r')
+                    else if (thisChar == L'R' || thisChar == L'r')
                     {
                         colour = mLayer->_getMarkupColour(0);
                     }
-                    else if (thisChar == 'M' || thisChar == 'm')
+                    else if (thisChar == L'M' || thisChar == L'm')
                     {
                         fixedWidth = !fixedWidth;
                     }
-                    else if (thisChar == '@')
+                    else if (thisChar == L'@')
                     {
                         markupMode = false;
                         bool foundIt = false;
                         size_t begin = i;
                         while(i < mText.size())
                         {
-                            if (mText[i] == '%')
+                            if (mText[i] == L'%')
                             {
                                 foundIt = true;
                                 break;
@@ -2448,91 +2452,102 @@ namespace Gorilla
                         if (foundIt == false)
                             return;
 
-                        Ogre::uint index = Ogre::StringConverter::parseUnsignedInt(mText.substr(begin+1, i - begin - 1));
-                        glyphData = mLayer->_getGlyphData(index);
-                        if (glyphData == 0)
+                        //Ogre::uint index = Ogre::StringConverter::parseUnsignedInt(mText.substr(begin+1, i - begin - 1));
+                        unsigned int index = wcstoul(mText.substr(begin+1, i - begin - 1).c_str(), NULL, 10);
+                        //glyphData = mLayer->_getGlyphData(index);
+                        glyph = fontMgr.getGlyphInfo(index);
+                        if (!glyph)
                             return;
-                        lineHeight = std::max(lineHeight, glyphData->mLineHeight);
+                        //lineHeight = std::max(lineHeight, glyphData->mLineHeight);
                         continue;
                     }
-                    else if (thisChar == ':')
-                    {
-                        markupMode = false;
-                        bool foundIt = false;
-                        size_t begin = i;
-                        while(i < mText.size())
-                        {
-                            if (mText[i] == '%')
-                            {
-                                foundIt = true;
-                                break;
-                            }
-                            i++;
-                        }
+                    // Show sprite, disable now, because of string and wstring
+                    //else if (thisChar == ':')
+                    //{
+                    //    markupMode = false;
+                    //    bool foundIt = false;
+                    //    size_t begin = i;
+                    //    while(i < mText.size())
+                    //    {
+                    //        if (mText[i] == L'%')
+                    //        {
+                    //            foundIt = true;
+                    //            break;
+                    //        }
+                    //        i++;
+                    //    }
 
-                        if (foundIt == false)
-                            return;
+                    //    if (foundIt == false)
+                    //        return;
 
-                        Ogre::String sprite_name = mText.substr(begin+1, i - begin - 1);
+                    //    Ogre::String sprite_name = mText.substr(begin+1, i - begin - 1);
 
-                        Sprite* sprite = mLayer->_getSprite(sprite_name);
-                        if (sprite == 0)
-                            continue;
+                    //    Sprite *sprite = mLayer->_getSprite(sprite_name);
+                    //    if (sprite == 0)
+                    //        continue;
 
-                        left = cursorX - texelOffsetX;
-                        top = cursorY - texelOffsetY + glyph->verticalOffset;
-                        right = left + sprite->spriteWidth + texelOffsetX;
-                        bottom = top + sprite->spriteHeight + texelOffsetY;
+                    //    left = cursorX - texelOffsetX;
+                    //    //top = cursorY - texelOffsetY + glyph->verticalOffset;
+                    //    top = cursorY - texelOffsetY;
+                    //    right = left + sprite->spriteWidth + texelOffsetX;
+                    //    bottom = top + sprite->spriteHeight + texelOffsetY;
 
-                        Character c;
-                        c.mIndex = i;
-                        c.mPosition[TopLeft].x = left;
-                        c.mPosition[TopLeft].y = top;
-                        c.mPosition[TopRight].x = right;
-                        c.mPosition[TopRight].y = top;
-                        c.mPosition[BottomLeft].x = left;
-                        c.mPosition[BottomLeft].y = bottom;
-                        c.mPosition[BottomRight].x = right;
-                        c.mPosition[BottomRight].y = bottom;
-                        c.mUV[0] = sprite->texCoords[0];
-                        c.mUV[1] = sprite->texCoords[1];
-                        c.mUV[2] = sprite->texCoords[2];
-                        c.mUV[3] = sprite->texCoords[3];
-                        c.mColour = colour;
+                    //    Character c;
+                    //    c.mIndex = i;
+                    //    c.mPosition[TopLeft].x = left;
+                    //    c.mPosition[TopLeft].y = top;
+                    //    c.mPosition[TopRight].x = right;
+                    //    c.mPosition[TopRight].y = top;
+                    //    c.mPosition[BottomLeft].x = left;
+                    //    c.mPosition[BottomLeft].y = bottom;
+                    //    c.mPosition[BottomRight].x = right;
+                    //    c.mPosition[BottomRight].y = bottom;
+                    //    c.mUV[0] = sprite->texCoords[0];
+                    //    c.mUV[1] = sprite->texCoords[1];
+                    //    c.mUV[2] = sprite->texCoords[2];
+                    //    c.mUV[3] = sprite->texCoords[3];
+                    //    c.mColour = colour;
 
-                        mCharacters.push_back(c);
+                    //    mCharacters.push_back(c);
 
-                        cursorX  += sprite->spriteWidth;
+                    //    cursorX  += sprite->spriteWidth;
 
-                        lineHeight = std::max(lineHeight, sprite->spriteHeight);
+                    //    //lineHeight = std::max(lineHeight, sprite->spriteHeight);
 
-                        continue;
-                    }
-
+                    //    continue;
+                    //}
 
                     continue;
                 }
                 markupMode = false;
             }
 
-            glyph = glyphData->getGlyph(thisChar);
+            //glyph = glyphData->getGlyph(thisChar);
+            glyph = fontMgr.getGlyphInfo(thisChar);
+            if(!glyph)
+                continue;
 
             if (!fixedWidth)
             {
-                kerning = glyph->getKerning(lastChar);
-                if (kerning == 0)
-                    kerning = glyphData->mLetterSpacing;
+                //kerning = glyph->getKerning(lastChar);
+                //if (kerning == 0)
+                //    kerning = glyphData->mLetterSpacing;
+                kerning = mLetterSpacing;
             }
 
-            left = cursorX;
-            top = cursorY + glyph->verticalOffset;
-            right = cursorX + glyph->glyphWidth + texelOffsetX;
-            bottom = top + glyph->glyphHeight + texelOffsetY;
-
+            //left = cursorX;
+            //top = cursorY + glyph->verticalOffset;
+            //right = cursorX + glyph->glyphWidth + texelOffsetX;
+            //bottom = top + glyph->glyphHeight + texelOffsetY;
+            left = cursorX - texelOffsetX;
+            top = cursorY - texelOffsetY;
+            right = cursorX + glyph->advanceX + texelOffsetX;
+            bottom = top + glyph->advanceY + texelOffsetY;
 
             if (fixedWidth)
             {
-                Ogre::Real offset = std::floor((glyphData->mMonoWidth - glyph->glyphWidth) / 2.0f);
+                //Ogre::Real offset = std::floor((glyphData->mMonoWidth - glyph->glyphWidth) / 2.0f);
+                Ogre::Real offset = std::floor(mSpaceLength / 2.0f);
                 left += offset;
                 right += offset;
             }
@@ -2543,22 +2558,36 @@ namespace Gorilla
             c.mPosition[TopLeft].y = top;
             c.mPosition[TopRight].x = right;
             c.mPosition[TopRight].y = top;
-            c.mPosition[BottomLeft].x = left;
-            c.mPosition[BottomLeft].y = bottom;
             c.mPosition[BottomRight].x = right;
             c.mPosition[BottomRight].y = bottom;
-            c.mUV[0] = glyph->texCoords[0];
-            c.mUV[1] = glyph->texCoords[1];
-            c.mUV[2] = glyph->texCoords[2];
-            c.mUV[3] = glyph->texCoords[3];
+            c.mPosition[BottomLeft].x = left;
+            c.mPosition[BottomLeft].y = bottom;
+            //c.mUV[0] = glyph->texCoords[0];
+            //c.mUV[1] = glyph->texCoords[1];
+            //c.mUV[2] = glyph->texCoords[2];
+            //c.mUV[3] = glyph->texCoords[3];
+            c.mUV[0].x = glyph->uvRect.left + 1.0f;
+            c.mUV[0].y = glyph->uvRect.top;
+            c.mUV[1].x = glyph->uvRect.right + 1.0f;
+            c.mUV[1].y = glyph->uvRect.top;
+            c.mUV[2].x = glyph->uvRect.right + 1.0f;
+            c.mUV[2].y = glyph->uvRect.bottom;
+            c.mUV[3].x = glyph->uvRect.left + 1.0f;
+            c.mUV[3].y = glyph->uvRect.bottom;
             c.mColour = colour;
 
             mCharacters.push_back(c);
 
             if (fixedWidth)
-                cursorX  += glyphData->mMonoWidth;
+            {
+                //cursorX  += glyphData->mMonoWidth;
+                cursorX  += mSpaceLength;
+            }
             else
-                cursorX  += glyph->glyphAdvance + kerning;
+            {
+                //cursorX  += glyph->glyphAdvance + kerning;
+                cursorX  += glyph->advanceX + kerning;
+            }
 
             if( cursorX > mMaxTextWidth )
                 mMaxTextWidth = cursorX;
@@ -2573,14 +2602,13 @@ namespace Gorilla
 
     void  MarkupText::_redraw()
     {
-
         if (mDirty == false)
             return;
 
         mVertices.remove_all();
 
         Vertex temp;
-        for (size_t i=0; i < mCharacters.size();i++)
+        for (size_t i = 0; i < mCharacters.size(); i++)
         {
             PUSH_QUAD2(mVertices, temp, mCharacters[i].mPosition, mCharacters[i].mColour, mCharacters[i].mUV);
         }

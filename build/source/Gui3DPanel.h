@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -33,14 +33,14 @@
 #include "Gui3D.h"
 #include "Gui3DPanelContainer.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 //
 class Panel : public PanelContainer
 {
 public:
-    Panel(Gui3D* gui, 
+    Panel(Gui3D *gui, 
           Ogre::SceneManager* sceneMgr, 
           const Ogre::Vector2& size,
           Ogre::Real distanceFromPanelToInteractWith,
@@ -63,7 +63,7 @@ public:
     Ogre::SceneNode* mPanelCameraNode; //!< \brief The node the camera should be attached to and look at mNode for this panel
 
 protected:
-    Gorilla::ScreenRenderable* mScreenRenderable;
+    Gui3DScreenRenderable *mScreenRenderable;
     Ogre::Real mDistanceFromPanelToInteractWith; //!< \brief The distance the origin of a ray can be to interact with the panel.
 };
 

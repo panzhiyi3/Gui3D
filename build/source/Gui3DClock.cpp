@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -27,7 +27,7 @@
 
 #include "Gui3DClock.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 Clock::Clock(void)

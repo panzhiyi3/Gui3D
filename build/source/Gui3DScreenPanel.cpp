@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -24,17 +24,16 @@
 */
 
 
-
 #include "Gui3DScreenPanel.h"
 #include "Gui3DPanelColors.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 using namespace std;
 
-ScreenPanel::ScreenPanel(Gui3D* gui, 
-                         Gorilla::Screen* screen, 
+ScreenPanel::ScreenPanel(Gui3D *gui, 
+                         Gui3DScreen* screen, 
                          const Ogre::Vector2& startPosition,
                          const Ogre::Vector2& size,
                          const Ogre::String& atlasName,

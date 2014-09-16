@@ -6,13 +6,14 @@
 using namespace Gorilla;
 
 Font::Font(int textureSize, int ttfSize, int ttfResolution, bool antiAliased)
-:mTtfMaxBearingY(0)
-,mTtfResolution(0)
-,mAntialiasColour(antiAliased)
-,mLeftBlankNum(0)
-,mImageData(NULL)
-,mImage_v(0)
-,mImage_u(0)
+: mTtfMaxBearingY(0)
+, mTtfResolution(0)
+, mAntialiasColour(antiAliased)
+, mLeftBlankNum(0)
+, mCharSpacer(0)
+, mImageData(NULL)
+, mImage_v(0)
+, mImage_u(0)
 {
     mWidth = textureSize;
     mHeight = textureSize;
@@ -29,6 +30,68 @@ Font::~Font()
 
 void Font::unLoad()
 {
+}
+
+void Font::addCodePointRange(const FreeTypeFont::CodePointRange &range)
+{
+    mCodePointRangeList.push_back(range);
+}
+
+void Font::clearCodePointRanges()
+{
+    mCodePointRangeList.clear();
+}
+
+const Font::CodePointRangeList &Font::getCodePointRangeList() const
+{
+    return mCodePointRangeList;
+}
+
+const Font::UVRect &Font::getGlyphTexCoords(Font::CodePoint id) const
+{
+    Font::CodePointMap::const_iterator i = mCodePointMap.find(id);
+    if (i != mCodePointMap.end())
+    {
+        return i->second.uvRect;
+    }
+    else
+    {
+        static Font::UVRect nullRect(0.0, 0.0, 0.0, 0.0);
+        return nullRect;
+    }
+}
+
+const FreeTypeFont::GlyphInfo *Font::getGlyphInfo(CodePoint id)
+{
+    CodePointMap::iterator i = mCodePointMap.find(id);
+    if (i == mCodePointMap.end())
+    {
+        return NULL;
+    }
+    if(i->second.useCount < 0xffffffff)
+    {
+        i->second.useCount++;
+    }
+    return &i->second;
+}
+
+bool Font::hasBlankInTexture() const 
+{ 
+    return mLeftBlankNum > 0; 
+}
+
+Font::CodePoint Font::getLessUseChar()
+{
+    CodePointMap::iterator itr = mCodePointMap.begin();
+    CodePointMap::iterator itrEnd = mCodePointMap.end();
+    CodePointMap::iterator itrLess = mCodePointMap.begin();
+    while(itr != itrEnd)
+    {
+        if(itr->second.useCount < itrLess->second.useCount)
+            itrLess = itr;
+        itr++;
+    }
+    return itrLess->second.codePoint;   
 }
 
 const Ogre::String &Font::getTextureName()
@@ -48,12 +111,12 @@ bool Font::isCodeIdInRange(Font::CodePoint id) const
     return false;
 }
 
-int Font::getPointSize() const
+int Font::getFontPointSize() const
 {
     return mTtfSize;
 }
 
-float Font::getPixelSize() const
+float Font::getFontPixelSize() const
 {
     float value = (float) mTtfSize / 72 * mTtfResolution;
     return value;

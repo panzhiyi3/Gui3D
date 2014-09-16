@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -51,7 +51,7 @@
 #include "Gui3DScrollBar.h"
 #include "Gui3DTextZone.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 /*! class. PanelContainer
@@ -61,7 +61,7 @@ namespace Gui3D
 class PanelContainer : public Container
 {
 public:
-    PanelContainer(Gui3D* gui, const Ogre::Vector2& size);
+    PanelContainer(Gui3D *gui, const Ogre::Vector2& size);
     
     ~PanelContainer();
 

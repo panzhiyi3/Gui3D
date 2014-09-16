@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -31,7 +31,7 @@
 #include "Gui3DPanelElement.h"
 #include "Gui3DFunctorBase.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 /*! class. PanelElementCallback

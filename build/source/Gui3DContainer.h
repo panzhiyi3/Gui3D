@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -31,7 +31,7 @@
 
 #include "Gui3D.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 /*! class. Container
@@ -41,22 +41,22 @@ namespace Gui3D
 class Container
 {
 public:
-    Container(Gui3D* gui);
-    
+    Container(Gui3D *gui);
+
     ~Container();
 
-    /** \brief Return the Gui3D layer
+    /** \brief Return the Gui3DEx layer
     */
     Gorilla::Layer* getGUILayer();
 
-    /** \brief Return the Gui3D Panel colors of the Gui3D that created it
+    /** \brief Return the Gui3DEx Panel colors of the Gui3DEx that created it
     */
     PanelColors* getPanelColors();
 
 protected:
     Gorilla::Layer* mGUILayer;
 
-    Gui3D* mGui3D; //!< \brief Pointer to the Gui3D that created it
+    Gui3D* mGui3D; //!< \brief Pointer to the Gui3DEx that created it
 };
 
 }

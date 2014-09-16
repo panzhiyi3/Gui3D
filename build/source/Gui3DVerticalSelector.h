@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -35,7 +35,7 @@
 
 #include "Gui3DCaption.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 /*! class. VerticalSelector

@@ -45,12 +45,12 @@ namespace Gorilla
 
         virtual const Ogre::String &getTextureName();
 
-        virtual void addCodePointRange(const CodePointRange& range) = 0;
+        virtual void addCodePointRange(const CodePointRange& range);
 
         /*
          * Clear the list of code point ranges.
          */
-        virtual void clearCodePointRanges() = 0;
+        virtual void clearCodePointRanges();
 
         virtual bool isCodeIdInRange(CodePoint id) const;
 
@@ -58,9 +58,9 @@ namespace Gorilla
          * Get a const reference to the list of code point ranges to be used to
            generate glyphs from a truetype font.
          */
-        virtual inline const CodePointRangeList& getCodePointRangeList() const = 0;
+        virtual inline const CodePointRangeList& getCodePointRangeList() const;
 
-        virtual inline const UVRect& getGlyphTexCoords(CodePoint id) const = 0;
+        virtual inline const UVRect& getGlyphTexCoords(CodePoint id) const;
 
         /** Sets the texture coordinates of a glyph.
          @remarks
@@ -86,21 +86,21 @@ namespace Gorilla
             unsigned int u2Pixel, unsigned int v2Pixel,
             unsigned int advanceX, unsigned int advanceY, float textureAspect) = 0;
 
-        virtual const GlyphInfo *getGlyphInfo(CodePoint id) = 0;
+        virtual const GlyphInfo *getGlyphInfo(CodePoint id);
 
         virtual void insertGlyphInfo(CodePoint id) = 0;
 
-        virtual bool hasBlankInTexture() const = 0;
+        virtual bool hasBlankInTexture() const;
 
         virtual void renderGlyphIntoTexture(CodePoint id) = 0;
 
-        virtual CodePoint getLessUseChar() = 0;
+        virtual CodePoint getLessUseChar();
 
         virtual void removeGlyph(CodePoint id) = 0;
 
-        virtual inline int getPointSize() const;
+        virtual inline int getFontPointSize() const;
 
-        virtual inline float getPixelSize() const;
+        virtual inline float getFontPixelSize() const;
 
     protected:
         // Map from unicode code point to texture coordinates
@@ -111,6 +111,7 @@ namespace Gorilla
         CodePointRangeList mCodePointRangeList;
 
         std::string mFontPath;
+
         FT_Library mFtLibrary;
         FT_Face mFtFace;
 

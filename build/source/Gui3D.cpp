@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,30 +26,10 @@
 
 #include "Gui3D.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
 using namespace std;
-
-struct Gui3DScreen
-{
-    Gui3DScreen(Gorilla::Screen* screen)
-        : mScreen(screen)
-    {}
-    Gorilla::Screen* mScreen;
-    map<Ogre::String, Gorilla::Layer*> mLayers;
-};
-
-
-struct Gui3DScreenRenderable
-{
-    Gui3DScreenRenderable(Gorilla::ScreenRenderable* screenRenderable)
-        : mScreenRenderable(screenRenderable)
-    {}
-    Gorilla::ScreenRenderable* mScreenRenderable;
-    map<Ogre::String, Gorilla::Layer*> mLayers;
-};
-
 
 Gui3D::Gui3D(PanelColors* panelColors)
     : mPanelColors(NULLPTR)
@@ -58,15 +38,24 @@ Gui3D::Gui3D(PanelColors* panelColors)
     setPanelColors(panelColors);
 }
 
+Gui3D::Gui3D()
+{
+    mSilverback = new Gorilla::Silverback();
+    mPanelColors = new PanelColors();
+}
 
 Gui3D::~Gui3D()
 {
+    if(mPanelColors)
+    {
+        delete mPanelColors;
+        mPanelColors = NULL;
+    }
     // Implicit delete of screens, screenRenderables and atlas
     delete mSilverback;
 }
 
-
-Gorilla::Silverback* Gui3D::getSilverback()
+Gorilla::Silverback *Gui3D::getSilverback()
 {
     return mSilverback;
 }
@@ -75,9 +64,7 @@ Gorilla::Silverback* Gui3D::getSilverback()
 //
 // ScreenRenderables methods (2D Screens rendered in 3D)
 //
-
-
-Gorilla::Layer* Gui3D::getLayer(const Ogre::String& screenRenderableName,
+Gorilla::Layer *Gui3D::getLayer(const Ogre::String& screenRenderableName,
                                 const Ogre::String& layerName)
 {
     if (mScreenRenderables[screenRenderableName] != NULLPTR)
@@ -86,23 +73,21 @@ Gorilla::Layer* Gui3D::getLayer(const Ogre::String& screenRenderableName,
     return NULLPTR;
 }
 
-
-Gorilla::Layer* Gui3D::getLayer(Gorilla::ScreenRenderable* screenRenderable,
+Gorilla::Layer *Gui3D::getLayer(Gui3DScreenRenderable *screenRenderable,
                                 const Ogre::String& layerName)
 {
-    map<Ogre::String, Gui3DScreenRenderable*>::iterator it =
+    map<Ogre::String, Gui3DScreenRenderable *>::iterator it =
         mScreenRenderables.begin();
 
     for (; it != mScreenRenderables.end(); ++it)
-        if (it->second->mScreenRenderable == screenRenderable)
+        if (it->second == screenRenderable)
             return getLayer(it->first, layerName);
 
     return NULLPTR;
 }
 
-
-Gorilla::Layer* Gui3D::createLayer(Gorilla::ScreenRenderable* screenRenderable,
-                                   const Ogre::String& layerName)
+Gorilla::Layer *Gui3D::createLayer(Gui3DScreenRenderable *screenRenderable,
+                                   const Ogre::String &layerName)
 {
     // Tests if already exists
     Gorilla::Layer* layer = getLayer(screenRenderable, layerName);
@@ -114,7 +99,7 @@ Gorilla::Layer* Gui3D::createLayer(Gorilla::ScreenRenderable* screenRenderable,
 
     // Try to find the screenRenderable
     for (; it != mScreenRenderables.end(); ++it)
-        if (it->second->mScreenRenderable == screenRenderable)
+        if (it->second == screenRenderable)
         {
             Gorilla::Layer* layer = screenRenderable->createLayer(1);
             it->second->mLayers[layerName] = layer;
@@ -124,9 +109,8 @@ Gorilla::Layer* Gui3D::createLayer(Gorilla::ScreenRenderable* screenRenderable,
     return NULLPTR;
 }
 
-
-Gorilla::Layer* Gui3D::createLayer(const Ogre::String& screenRenderableName,
-                                   const Ogre::String& layerName)
+Gorilla::Layer *Gui3D::createLayer(const Ogre::String &screenRenderableName,
+                                   const Ogre::String &layerName)
 {
     // Tests if already exists
     Gorilla::Layer* layer = getLayer(screenRenderableName, layerName);
@@ -148,8 +132,7 @@ Gorilla::Layer* Gui3D::createLayer(const Ogre::String& screenRenderableName,
     return NULLPTR;
 }
 
-
-Gorilla::ScreenRenderable* Gui3D::createScreenRenderable(const Ogre::Vector2& pos, 
+Gui3DScreenRenderable *Gui3D::createScreenRenderable(const Ogre::Vector2& pos, 
                                                          const Ogre::String& atlasName, 
                                                          const Ogre::String& name)
 {
@@ -159,14 +142,13 @@ Gorilla::ScreenRenderable* Gui3D::createScreenRenderable(const Ogre::Vector2& po
     mScreenRenderables[name] = new Gui3DScreenRenderable(
         mSilverback->createScreenRenderable(pos, atlasName));
 
-    return mScreenRenderables[name]->mScreenRenderable;
+    return mScreenRenderables[name];
 }
     
-
-Gorilla::ScreenRenderable* Gui3D::getScreenRenderable(const Ogre::String& name)
+Gui3DScreenRenderable *Gui3D::getScreenRenderable(const Ogre::String& name)
 {
     if (mScreenRenderables[name] != NULLPTR)
-        return mScreenRenderables[name]->mScreenRenderable;
+        return mScreenRenderables[name];
 
     return NULLPTR;
 }
@@ -175,9 +157,7 @@ Gorilla::ScreenRenderable* Gui3D::getScreenRenderable(const Ogre::String& name)
 //
 // Screens methods (2D screen)
 //
-
-
-Gorilla::Layer* Gui3D::getLayerScreen(const Ogre::String& screenName, 
+Gorilla::Layer *Gui3D::getLayerScreen(const Ogre::String& screenName, 
                                       const Ogre::String& layerName)
 {
     if (mScreens[screenName] != 0)
@@ -186,44 +166,48 @@ Gorilla::Layer* Gui3D::getLayerScreen(const Ogre::String& screenName,
     return NULLPTR;
 }
 
-
-Gorilla::Layer* Gui3D::getLayerScreen(Gorilla::Screen* screen, 
+Gorilla::Layer *Gui3D::getLayerScreen(Gui3DScreen *screen, 
                                       const Ogre::String& layerName)
 {
     map<Ogre::String, Gui3DScreen*>::iterator it = mScreens.begin();
 
     for (; it != mScreens.end(); ++it)
-        if (it->second->mScreen == screen)
+    {
+        if (it->second == screen)
             return getLayerScreen(it->first, layerName);
+    }
 
     return NULLPTR;
 }
 
-
-Gorilla::Layer* Gui3D::createLayerScreen(Gorilla::Screen* screen, 
+Gorilla::Layer *Gui3D::createLayerScreen(Gui3DScreen *screen, 
                                          const Ogre::String& layerName)
 {
+    if(!screen)
+        return NULLPTR;
+
     // Tests if already exists
     Gorilla::Layer* layer = getLayerScreen(screen, layerName);
     if (layer != NULLPTR)
         return layer;
 
-    map<Ogre::String, Gui3DScreen*>::iterator it = mScreens.begin();
+    map<Ogre::String, Gui3DScreen *>::iterator it = mScreens.begin();
 
     // Try to find the screen
     for (; it != mScreens.end(); ++it)
-        if (it->second->mScreen == screen)
+    {
+        if (it->second == screen)
         {
-            Gorilla::Layer* layer = screen->createLayer(1);
+            Gorilla::Layer* layer = screen->mScreen->createLayer(1);
             it->second->mLayers[layerName] = layer;
             return layer;
         }
+    }
 
     return NULLPTR;
 }
 
-
-Gorilla::Layer* Gui3D::createLayerScreen(const Ogre::String& screenName, 
+Gorilla::Layer *Gui3D::createLayerScreen(const Ogre::String& screenName, 
                                          const Ogre::String& layerName)
 {
     // Tests if already exists
@@ -245,8 +229,7 @@ Gorilla::Layer* Gui3D::createLayerScreen(const Ogre::String& screenName,
     return NULLPTR;
 }
 
-
-Gorilla::Screen* Gui3D::createScreen(Ogre::Viewport* vp, 
+Gui3DScreen *Gui3D::createScreen(Ogre::Viewport* vp, 
                                      const Ogre::String& atlasName, 
                                      const Ogre::String& name)
 {
@@ -254,14 +237,13 @@ Gorilla::Screen* Gui3D::createScreen(Ogre::Viewport* vp,
         loadAtlas(atlasName);
 
     mScreens[name] = new Gui3DScreen(mSilverback->createScreen(vp, atlasName));
-    return mScreens[name]->mScreen;
+    return mScreens[name];
 }
 
-
-Gorilla::Screen* Gui3D::getScreen(const Ogre::String& name)
+Gui3DScreen *Gui3D::getScreen(const Ogre::String& name)
 {
     if (mScreens[name] != NULLPTR)
-        return mScreens[name]->mScreen;
+        return mScreens[name];
     return NULLPTR;
 }
 
@@ -269,8 +251,6 @@ Gorilla::Screen* Gui3D::getScreen(const Ogre::String& name)
 //
 // General methods
 //
-
-
 bool Gui3D::hasAtlas(const Ogre::String& name)
 {
     for (size_t i=0; i < mAtlas.size(); i++)
@@ -279,65 +259,66 @@ bool Gui3D::hasAtlas(const Ogre::String& name)
     return false;
 }
 
-
 void Gui3D::loadAtlas(const Ogre::String& name)
 {
     mSilverback->loadAtlas(name);
     mAtlas.push_back(name);
 }
 
-
-void Gui3D::destroyScreenRenderable(const Ogre::String& screenRenderableName)
+void Gui3D::destroyScreenRenderable(const Ogre::String &screenRenderableName)
 {
     // Will implicitly destroy its layers
-    mSilverback->destroyScreenRenderable(mScreenRenderables[screenRenderableName]->mScreenRenderable);
+    Gui3DScreenRenderable *screen = mScreenRenderables[screenRenderableName];
+    mSilverback->destroyScreenRenderable(screen->mScreenRenderable);
     mScreenRenderables.erase(screenRenderableName);
+    delete screen;
 }
 
-
-void Gui3D::destroyScreenRenderable(Gorilla::ScreenRenderable* screenRenderable)
+void Gui3D::destroyScreenRenderable(Gui3DScreenRenderable *screenRenderable)
 {
-    map<Ogre::String, Gui3DScreenRenderable*>::iterator it =
+    map<Ogre::String, Gui3DScreenRenderable *>::iterator it =
         mScreenRenderables.begin();
 
     for (; it != mScreenRenderables.end(); ++it)
-        if (it->second->mScreenRenderable == screenRenderable)
+        if (it->second == screenRenderable)
         {
             destroyScreenRenderable(it->first);
             break;
         }
 }
 
-
-void Gui3D::destroyScreen(const Ogre::String& screenName)
+void Gui3D::destroyScreen(const Ogre::String &screenName)
 {
     // Will implicitly destroy its layers
-    mSilverback->destroyScreen(mScreens[screenName]->mScreen);
+    Gui3DScreen *screen = mScreens[screenName];
+    mSilverback->destroyScreen(screen->mScreen);
     mScreens.erase(screenName);
+    delete screen;
 }
 
-
-void Gui3D::destroyScreen(Gorilla::Screen* screen)
+void Gui3D::destroyScreen(Gui3DScreen *screen)
 {
     map<Ogre::String, Gui3DScreen*>::iterator it =
         mScreens.begin();
 
     for (; it != mScreens.end(); ++it)
-        if (it->second->mScreen == screen)
+        if (it->second == screen)
         {
             destroyScreen(it->first);
             break;
         }
 }
 
-
 void Gui3D::setPanelColors(PanelColors* panelColors)
 {
+    if(mPanelColors)
+    {
+        delete mPanelColors;
+    }
     mPanelColors = panelColors;
 }
 
-
-PanelColors* Gui3D::getPanelColors()
+PanelColors *Gui3D::getPanelColors()
 {
     return mPanelColors;
 }

@@ -1,5 +1,5 @@
 /*
-    Gui3D
+    Gui3DEx
     -------
     
     Copyright (c) 2012 Valentin Frechaud
@@ -26,10 +26,10 @@
 
 #include "Gui3DContainer.h"
 
-namespace Gui3D
+namespace Gui3DEx
 {
 
-Container::Container(Gui3D* gui)
+Container::Container(Gui3D *gui)
                      : mGui3D(gui), mGUILayer(NULLPTR)
 {
 }
