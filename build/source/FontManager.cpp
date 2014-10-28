@@ -139,8 +139,8 @@ void FontManager::setCallback(IFontCallback *callback)
     mCallback = callback;
 }
 
-void FontManager::setDefaultFont(const Ogre::String &fontName,
-                                 const Ogre::String &fontFilename,
+void FontManager::setDefaultFont(const std::string &fontName,
+                                 const std::string &fontFilename,
                                  const int fontSize,
                                  const int textureSize,
                                  const int fontResolution,

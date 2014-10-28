@@ -45,7 +45,7 @@ namespace Gui3DEx
     desc.
         A value selector with button on left and right.
 */
-class InlineSelector : public MultipleElementsSelector, public Captioned
+class GUI3D_EXPORTS InlineSelector : public MultipleElementsSelector, public Captioned
 {
 public:
     InlineSelector(Ogre::Real x, 

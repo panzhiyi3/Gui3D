@@ -39,7 +39,7 @@ namespace Gui3DEx
     desc.
         Checkbox with sprite as design.
 */
-class CheckboxSprite : public Checkbox
+class GUI3D_EXPORTS CheckboxSprite : public Checkbox
 {
 public:
     CheckboxSprite(Ogre::Real x, 

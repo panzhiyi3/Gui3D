@@ -46,7 +46,7 @@ namespace Gui3DEx
     desc.
         An editable text zone.
 */
-class TextZone : public PanelElementCallback, public RectangleDesigned, public Captioned
+class GUI3D_EXPORTS TextZone : public PanelElementCallback, public RectangleDesigned, public Captioned
 {
 public:
     TextZone(Ogre::Real x,

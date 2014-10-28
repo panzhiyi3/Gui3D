@@ -38,7 +38,7 @@ namespace Gui3DEx
     desc.
         Interface for all Gui3DPanelElements that contains a callback
 */
-class PanelElementCallback : public PanelElement
+class GUI3D_EXPORTS PanelElementCallback : public PanelElement
 {
 public:
     PanelElementCallback(Container* parentContainer)

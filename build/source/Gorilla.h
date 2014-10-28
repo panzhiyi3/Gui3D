@@ -36,6 +36,7 @@ THE SOFTWARE.
 
 #include <OGRE/Ogre.h>
 
+#include "Common.h"
 #include "Gui3DConfig.h"
 #include "FontManager.h"
 

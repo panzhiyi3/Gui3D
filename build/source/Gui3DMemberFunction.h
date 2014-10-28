@@ -36,7 +36,7 @@ namespace Gui3DEx
         Create a function that callback a class member function
 */
 template<typename T>
-class MemberFunction : public FunctorBase
+class GUI3D_EXPORTS MemberFunction : public FunctorBase
 {
 public:
     typedef bool(T::*MemberMethodType)(PanelElement*);

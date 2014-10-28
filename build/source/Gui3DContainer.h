@@ -38,7 +38,7 @@ namespace Gui3DEx
     desc.
         A container contains a layer and the gui object that created it
 */
-class Container
+class GUI3D_EXPORTS Container
 {
 public:
     Container(Gui3D *gui);

@@ -41,7 +41,7 @@ namespace Gui3DEx
     desc.
         A Button.
 */
-class Button : public PanelElementCallback, public RectangleDesigned, public Captioned
+class GUI3D_EXPORTS Button : public PanelElementCallback, public RectangleDesigned, public Captioned
 {
 public:
     Button(Ogre::Real x, 

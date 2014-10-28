@@ -60,6 +60,19 @@ Gorilla::Silverback *Gui3D::getSilverback()
     return mSilverback;
 }
 
+void Gui3D::setDefaultFont(const std::string &fontName,
+                    const std::string &fontFilename,
+                    const int fontSize,
+                    const int textureSize,
+                    const int fontResolution,
+                    const bool antiAliased,
+                    const Ogre::String &resourceGroup)
+{
+    if(getSilverback())
+    {
+        getSilverback()->getFontManager().setDefaultFont(fontName, fontFilename, fontSize, textureSize, fontResolution, antiAliased, resourceGroup);
+    }
+}
 
 //
 // ScreenRenderables methods (2D Screens rendered in 3D)

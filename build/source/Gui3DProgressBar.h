@@ -44,7 +44,7 @@ namespace Gui3DEx
     desc.
         A progress bar for loading
 */
-class ProgressBar : public PanelElementCallback, public RectangleDesigned, public Captioned
+class GUI3D_EXPORTS ProgressBar : public PanelElementCallback, public RectangleDesigned, public Captioned
 {
 public:
     ProgressBar(Ogre::Real x, 

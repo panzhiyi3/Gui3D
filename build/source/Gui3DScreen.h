@@ -7,7 +7,7 @@
 
 namespace Gui3DEx
 {
-    class Gui3DScreen
+    class GUI3D_EXPORTS Gui3DScreen
     {
     public:
         Gui3DScreen(Gorilla::Screen* screen)

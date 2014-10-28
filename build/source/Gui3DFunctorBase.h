@@ -36,7 +36,7 @@ namespace Gui3DEx
         Abstract interface that will be used for all functor
         object for callbacks
 */
-class FunctorBase
+class GUI3D_EXPORTS FunctorBase
 {
 public:
     virtual ~FunctorBase() {};

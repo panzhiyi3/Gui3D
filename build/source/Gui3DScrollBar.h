@@ -44,7 +44,7 @@ namespace Gui3DEx
     desc.
         A Scroll Bar.
 */
-class ScrollBar : public PanelElementCallback, public RectangleDesigned, public Captioned
+class GUI3D_EXPORTS ScrollBar : public PanelElementCallback, public RectangleDesigned, public Captioned
 {
 public:
     ScrollBar(Ogre::Real x, 

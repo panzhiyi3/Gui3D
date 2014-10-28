@@ -34,6 +34,7 @@
 #include "Gorilla.h"
 #include "Gui3DScreen.h"
 #include "Gui3DPanelColors.h"
+#include "Common.h"
 
 namespace Gui3DEx
 {
@@ -43,7 +44,7 @@ namespace Gui3DEx
     desc.
         The main object to instanciate Gui3D.
 */
-class Gui3D
+class GUI3D_EXPORTS Gui3D
 {
 public:
     /** \brief The PanelColors gave as argument will automatically be deleted in Gui3D destructor, or
@@ -52,11 +53,19 @@ public:
     Gui3D(PanelColors *);
     Gui3D();
 
-    ~Gui3D();
+    virtual ~Gui3D();
 
     /** \brief /!\ Be careful when using this. Return the main Gorilla object.
     */
     Gorilla::Silverback* getSilverback();
+
+    void setDefaultFont(const std::string &fontName,
+        const std::string &fontFilename,
+        const int fontSize = 20,
+        const int textureSize = 1024,
+        const int fontResolution = 72,
+        const bool antiAliased = false,
+        const Ogre::String &resourceGroup = Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
     // ScreenRenderables methods (2D Screens rendered in 3D)
 

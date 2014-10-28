@@ -160,8 +160,8 @@ namespace Gorilla
 
         virtual void setCallback(IFontCallback *callback);
 
-        virtual void setDefaultFont(const Ogre::String &fontName,
-            const Ogre::String &fontFilename,
+        virtual void setDefaultFont(const std::string &fontName,
+            const std::string &fontFilename,
             const int fontSize = 20,
             const int textureSize = 1024,
             const int fontResolution = 72,

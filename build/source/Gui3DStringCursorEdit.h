@@ -26,8 +26,7 @@
 #ifndef Gui3DStringCursorEdit_H
 #define Gui3DStringCursorEdit_H
 
-
-
+#include "Common.h"
 #include "OGRE\OgreString.h"
 
 namespace Gui3DEx
@@ -37,7 +36,7 @@ namespace Gui3DEx
     desc.
         This class manage a string with a cursor
 */
-class StringCursorEdit
+class GUI3D_EXPORTS StringCursorEdit
 {
 public:
     StringCursorEdit();

@@ -41,7 +41,7 @@ namespace Gui3DEx
     desc.
         A simple Caption
 */
-class Caption : public PanelElement, public RectangleDesigned, public Captioned 
+class GUI3D_EXPORTS Caption : public PanelElement, public RectangleDesigned, public Captioned 
 {
 public:
     Caption(Ogre::Real x, 

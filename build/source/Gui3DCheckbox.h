@@ -43,7 +43,7 @@ namespace Gui3DEx
     desc.
         Abstract class for Checkbox.
 */
-class Checkbox : public PanelElementCallback, public RectangleDesigned
+class GUI3D_EXPORTS Checkbox : public PanelElementCallback, public RectangleDesigned
 {
 public:
     /** \brief Use Panel::makeCheckbox

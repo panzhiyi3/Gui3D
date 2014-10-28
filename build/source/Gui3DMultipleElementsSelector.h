@@ -37,7 +37,7 @@ namespace Gui3DEx
     desc.
         An abstract class for a selector with multiple elements and buttons.
 */
-class MultipleElementsSelector : public PanelElementCallback, public RectangleDesigned
+class GUI3D_EXPORTS MultipleElementsSelector : public PanelElementCallback, public RectangleDesigned
 {
 public:
     MultipleElementsSelector(Ogre::Real x, 

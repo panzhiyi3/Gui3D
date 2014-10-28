@@ -37,7 +37,7 @@ namespace Gui3DEx
 {
 
 //
-class ScreenPanel : public PanelContainer
+class GUI3D_EXPORTS ScreenPanel : public PanelContainer
 {
 public:
     /** \brief Create a new layer on the @screen to display widgets.

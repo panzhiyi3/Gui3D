@@ -39,7 +39,7 @@ namespace Gui3DEx
     desc.
         Checkbox with a gradient color / text design.
 */
-class CheckboxText : public Checkbox, public Captioned
+class GUI3D_EXPORTS CheckboxText : public Checkbox, public Captioned
 {
 public:
     CheckboxText(Ogre::Real x, 

@@ -37,7 +37,7 @@ namespace Gui3DEx
     desc.
         A Listbox which allows the user to make multiple choices.
 */
-class Listbox : public VerticalSelector
+class GUI3D_EXPORTS Listbox : public VerticalSelector
 {
 public:
     /** \brief Use Panel::makeListbox

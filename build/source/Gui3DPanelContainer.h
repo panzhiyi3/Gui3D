@@ -58,7 +58,7 @@ namespace Gui3DEx
     desc.
         A container contains a layer and the gui object that created it
 */
-class PanelContainer : public Container
+class GUI3D_EXPORTS PanelContainer : public Container
 {
 public:
     PanelContainer(Gui3D *gui, const Ogre::Vector2& size);

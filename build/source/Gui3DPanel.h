@@ -36,8 +36,7 @@
 namespace Gui3DEx
 {
 
-//
-class Panel : public PanelContainer
+class GUI3D_EXPORTS Panel : public PanelContainer
 {
 public:
     Panel(Gui3D *gui, 

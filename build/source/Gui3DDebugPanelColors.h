@@ -37,7 +37,7 @@ namespace Gui3DEx
     desc.
         A PanelColors that you should use in development, to make sure no panel element intersects
 */
-struct DebugPanelColors : public PanelColors
+struct GUI3D_EXPORTS DebugPanelColors : public PanelColors
 {
     DebugPanelColors();
 };

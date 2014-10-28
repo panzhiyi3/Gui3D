@@ -46,7 +46,7 @@ namespace Gui3DEx
     desc.
         A Combobox which allows the user to make one choice.
 */
-class Combobox : public VerticalSelector
+class GUI3D_EXPORTS Combobox : public VerticalSelector
 {
 public:
     /** \brief Use Panel::makeCombobox

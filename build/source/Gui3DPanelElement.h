@@ -44,7 +44,7 @@ namespace Gui3DEx
     desc.
         Interface for every Gorilla Panel Elements
 */
-class PanelElement
+class GUI3D_EXPORTS PanelElement
 {
 public:
     PanelElement(Container* parentContainer);

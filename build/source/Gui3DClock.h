@@ -28,7 +28,7 @@
 #ifndef Gui3DClock_H
 #define Gui3DClock_H
 
-
+#include "Common.h"
 
 namespace Gui3DEx
 {
@@ -37,7 +37,7 @@ namespace Gui3DEx
     desc.
         A Simple Clock class.
 */
-class Clock
+class GUI3D_EXPORTS Clock
 {
 public:
     Clock();

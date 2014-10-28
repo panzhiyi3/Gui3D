@@ -42,7 +42,7 @@ namespace Gui3DEx
     desc.
         An abstract class for all vertical selector such as Listbox or Combobox.
 */
-class VerticalSelector : public MultipleElementsSelector
+class GUI3D_EXPORTS VerticalSelector : public MultipleElementsSelector
 {
 public:
     VerticalSelector(Ogre::Real x, 
