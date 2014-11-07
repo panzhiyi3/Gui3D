@@ -28,7 +28,7 @@
 
 
 
-#include <OGRE\Ogre.h>
+#include <Ogre.h>
 
 #include "Gorilla.h"
 

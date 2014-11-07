@@ -29,7 +29,7 @@
 #include <map>
 #include <vector>
 
-#include <OGRE\Ogre.h>
+#include <Ogre.h>
 
 #include "Gorilla.h"
 #include "Gui3DScreen.h"

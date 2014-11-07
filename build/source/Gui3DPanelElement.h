@@ -30,8 +30,8 @@
 
 #include <vector>
 
-#include <OGRE\Ogre.h>
-#include <OIS\OIS.h>
+#include <Ogre.h>
+#include <OIS.h>
 
 #include "Gorilla.h"
 

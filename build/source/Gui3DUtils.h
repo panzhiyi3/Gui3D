@@ -1,7 +1,7 @@
 #ifndef Gui3DUtils_H
 #define Gui3DUtils_H
 
-#include <OGRE\OgrePrerequisites.h>
+#include <OgrePrerequisites.h>
 
 namespace Gui3DEx
 {

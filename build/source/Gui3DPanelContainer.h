@@ -30,7 +30,7 @@
 
 #include <vector>
 
-#include <OIS\OIS.h>
+#include <OIS.h>
 
 #include "Gorilla.h"
 
