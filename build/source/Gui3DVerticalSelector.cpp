@@ -53,7 +53,7 @@ VerticalSelector::VerticalSelector(Ogre::Real x,
                                    : MultipleElementsSelector(x, y, width, height, items, parentContainer),
                                      mNumTopVisibleElement(0)
 {
-    mMaxNumberOfVisibleElements = std::min(nbDisplayedElements, items.size());
+    mMaxNumberOfVisibleElements = std::min(static_cast<size_t>(nbDisplayedElements), items.size());
 
     mPreviousElementsButton->text(L"-");
     mPreviousElementsButton->setPressedCallback(this, &VerticalSelector::allElementsGoDownCallback);

@@ -34,7 +34,7 @@ THE SOFTWARE.
 
 
 
-#include <OGRE/Ogre.h>
+#include <Ogre.h>
 
 #include "Common.h"
 #include "Gui3DConfig.h"

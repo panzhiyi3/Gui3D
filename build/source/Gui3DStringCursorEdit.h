@@ -27,7 +27,7 @@
 #define Gui3DStringCursorEdit_H
 
 #include "Common.h"
-#include "OGRE\OgreString.h"
+#include "OgreString.h"
 
 namespace Gui3DEx
 {

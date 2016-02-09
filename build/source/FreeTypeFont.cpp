@@ -7,6 +7,9 @@ using namespace Ogre;
 
 #define BEARING_X_SPACER 1 //·ÀÖ¹×Ö·ûÌùÍ¼×ó¶Ë¶¥¸ñ£¬µ¼ÖÂÏÔÊ¾¾â³İ
 
+typedef unsigned char UCHAR;
+typedef unsigned int UINT;
+
 namespace Gorilla
 {
     const Ogre::String FONT_TEXTURE_BASENAME = "GUI3D_FreeTypeFontTexture";
